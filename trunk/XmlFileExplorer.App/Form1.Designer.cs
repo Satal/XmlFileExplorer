@@ -1,4 +1,4 @@
-﻿namespace XmlFileExplorer.App
+﻿namespace XmlFileExplorer
 {
     partial class Form1
     {
