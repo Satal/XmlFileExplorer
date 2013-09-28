@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Xml.Schema;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using XmlFileExplorer.Domain.Validation;
 
 namespace XmlFileExplorer.Tests
 {
@@ -10,7 +9,7 @@ namespace XmlFileExplorer.Tests
         [TestMethod]
         public void AddValidSchema()
         {
-            var validator = new XmlFileExplorer.XsdValidator();
+            var validator = new XsdValidator();
             var actual = validator.AddSchema(@"C:\Users\satal_000\Documents\GitHub\XmlFileExplorer\trunk\Test Files\PurchaseOrder\PurchaseOrder.xsd");
             Assert.IsTrue(actual);
         }

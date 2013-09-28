@@ -11,6 +11,8 @@
     <AssemblyName>XmlFileExplorer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,8 +36,12 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\XmlFileExplorer.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>XmlFileExplorer.App.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,7 +61,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XsdValidator.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +91,12 @@
     <Content Include="Resources\document.ico" />
     <Content Include="Resources\folder.ico" />
     <Content Include="Resources\XmlFileExplorer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XmlFileExplorer.Domain\XmlFileExplorer.Domain.csproj">
+      <Project>{87af0e0a-1b1a-463d-a991-3ef69f93a5aa}</Project>
+      <Name>XmlFileExplorer.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

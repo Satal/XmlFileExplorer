@@ -39,13 +39,13 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.spltMain = new System.Windows.Forms.SplitContainer();
             this.tvNavigation = new System.Windows.Forms.TreeView();
-            this.listView1 = new System.Windows.Forms.ListView();
             this.imgLstIcons = new System.Windows.Forms.ImageList(this.components);
+            this.listView1 = new System.Windows.Forms.ListView();
             this.colFileName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFileSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltMain)).BeginInit();
@@ -132,18 +132,10 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(648, 555);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(642, 26);
-            this.panel1.TabIndex = 0;
-            // 
             // spltMain
             // 
             this.spltMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.spltMain.Location = new System.Drawing.Point(3, 35);
+            this.spltMain.Location = new System.Drawing.Point(3, 36);
             this.spltMain.Name = "spltMain";
             // 
             // spltMain.Panel1
@@ -153,7 +145,7 @@
             // spltMain.Panel2
             // 
             this.spltMain.Panel2.Controls.Add(this.listView1);
-            this.spltMain.Size = new System.Drawing.Size(642, 517);
+            this.spltMain.Size = new System.Drawing.Size(642, 516);
             this.spltMain.SplitterDistance = 120;
             this.spltMain.TabIndex = 3;
             // 
@@ -165,22 +157,10 @@
             this.tvNavigation.Location = new System.Drawing.Point(0, 0);
             this.tvNavigation.Name = "tvNavigation";
             this.tvNavigation.SelectedImageIndex = 0;
-            this.tvNavigation.Size = new System.Drawing.Size(120, 517);
+            this.tvNavigation.Size = new System.Drawing.Size(120, 516);
             this.tvNavigation.TabIndex = 0;
-            // 
-            // listView1
-            // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colFileName,
-            this.colFileSize});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(518, 517);
-            this.listView1.SmallImageList = this.imgLstIcons;
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.tvNavigation.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvNavigation_BeforeExpand);
+            this.tvNavigation.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvNavigation_NodeMouseClick);
             // 
             // imgLstIcons
             // 
@@ -189,6 +169,23 @@
             this.imgLstIcons.Images.SetKeyName(0, "folder.ico");
             this.imgLstIcons.Images.SetKeyName(1, "document.ico");
             // 
+            // listView1
+            // 
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colFileName,
+            this.colFileSize});
+            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView1.FullRowSelect = true;
+            this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(0, 0);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(518, 516);
+            this.listView1.SmallImageList = this.imgLstIcons;
+            this.listView1.TabIndex = 0;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Details;
+            // 
             // colFileName
             // 
             this.colFileName.Text = "Name";
@@ -196,6 +193,14 @@
             // colFileSize
             // 
             this.colFileSize.Text = "File size";
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(642, 27);
+            this.panel1.TabIndex = 0;
             // 
             // Form1
             // 
@@ -209,6 +214,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
