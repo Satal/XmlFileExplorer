@@ -21,7 +21,29 @@ namespace XmlFileExplorer
         public Form1()
         {
             InitializeComponent();
+            SetUpAspectToStringConverters();
             PopulateTreeView();
+        }
+
+        private void SetUpAspectToStringConverters()
+        {
+            // Specify the file size format
+            colFilesize.AspectToStringConverter = delegate(object value)
+                {
+                    var size = (long) value;
+                    var limits = new[] { 1024*1024*1024, 1024*1024, 1024};
+                    var units = new[] {"GB", "MB", "KB"};
+
+                    for (var i = 0; i < limits.Length; i++)
+                    {
+                        if (size >= limits[i])
+                        {
+                            return String.Format("{0:#,##0.##} {1}", ((double) size/limits[i]), units[i]);
+                        }
+                    }
+
+                    return String.Format("{0} bytes", size);
+                };
         }
 
         private void PopulateTreeView()
@@ -47,23 +69,12 @@ namespace XmlFileExplorer
 
         private void LoadFiles(DirectoryInfo directory)
         {
-            listView1.Items.Clear();
+            olvFiles.Items.Clear();
+            olvFiles.AddObjects(directory.GetFiles());
 
-            foreach (var file in directory.GetFiles())
+            foreach (ColumnHeader col in olvFiles.Columns)
             {
-                var lvi = new ListViewItem(file.Name);
-
-                if (file.Extension == ".xml" && CurrentFolderConfig != null && CurrentFolderConfig.Schemas.Any())
-                {
-                    lvi.BackColor = IsXmlSchemaCompliant(file) ? _validColor : _invalidColor;
-                }
-
-                listView1.Items.Add(lvi);
-            }
-
-            foreach (ColumnHeader col in listView1.Columns)
-            {
-                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                col.Width = -2;
             }
         }
 
@@ -90,7 +101,9 @@ namespace XmlFileExplorer
 
             return validator.IsValid(file.FullName);
         }
-        
+
+        #region Directory TreeView
+
         private static void GetDirectories(IEnumerable<DirectoryInfo> subDirs, TreeNode nodeToAddTo)
         {
             var displayHiddenDirectories = Convert.ToBoolean(ConfigurationManager.AppSettings["DisplayHiddenDirectories"]);
@@ -110,13 +123,6 @@ namespace XmlFileExplorer
                     // Add a dummmy node to the node so that it is expandable
                     var dummyNode = new TreeNode("DummyNode");
                     aNode.Nodes.Add(dummyNode);
-
-                    //var subSubDirs = subDir.GetDirectories();
-
-                    //if (subSubDirs.Any())
-                    //{
-                    //    GetDirectories(subSubDirs, aNode);
-                    //}
 
                     nodeToAddTo.Nodes.Add(aNode);
                 }
@@ -143,12 +149,26 @@ namespace XmlFileExplorer
             ChangeDirectory(selectedDir);
         }
 
+        #endregion
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (tvNavigation.SelectedNode == null) return;
 
             var selectedDir = (DirectoryInfo) tvNavigation.SelectedNode.Tag;
             ConfigurationManager.AppSettings["LastViewedDirectory"] = selectedDir.FullName;
+        }
+
+        private void olvFiles_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
+        {
+            var file = e.Model as FileInfo;
+            if (file == null) return;
+
+            if (file.Extension == ".xml" && CurrentFolderConfig != null && CurrentFolderConfig.Schemas.Any())
+            {
+                e.Item.BackColor = IsXmlSchemaCompliant(file) ? _validColor : _invalidColor;
+            }
+
         }
     }
 }

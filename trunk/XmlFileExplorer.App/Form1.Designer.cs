@@ -42,16 +42,17 @@
             this.spltMain = new System.Windows.Forms.SplitContainer();
             this.tvNavigation = new System.Windows.Forms.TreeView();
             this.imgLstIcons = new System.Windows.Forms.ImageList(this.components);
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.colFileName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colFileSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.olvFiles = new BrightIdeasSoftware.ObjectListView();
+            this.colFilename = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.colFilesize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltMain)).BeginInit();
             this.spltMain.Panel1.SuspendLayout();
             this.spltMain.Panel2.SuspendLayout();
             this.spltMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -144,7 +145,7 @@
             // 
             // spltMain.Panel2
             // 
-            this.spltMain.Panel2.Controls.Add(this.listView1);
+            this.spltMain.Panel2.Controls.Add(this.olvFiles);
             this.spltMain.Size = new System.Drawing.Size(642, 516);
             this.spltMain.SplitterDistance = 120;
             this.spltMain.TabIndex = 3;
@@ -169,30 +170,32 @@
             this.imgLstIcons.Images.SetKeyName(0, "folder.ico");
             this.imgLstIcons.Images.SetKeyName(1, "document.ico");
             // 
-            // listView1
+            // olvFiles
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colFileName,
-            this.colFileSize});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.FullRowSelect = true;
-            this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(518, 516);
-            this.listView1.SmallImageList = this.imgLstIcons;
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.olvFiles.AllColumns.Add(this.colFilename);
+            this.olvFiles.AllColumns.Add(this.colFilesize);
+            this.olvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colFilename,
+            this.colFilesize});
+            this.olvFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.olvFiles.FullRowSelect = true;
+            this.olvFiles.HasCollapsibleGroups = false;
+            this.olvFiles.HideSelection = false;
+            this.olvFiles.IsSimpleDragSource = true;
+            this.olvFiles.Location = new System.Drawing.Point(0, 0);
+            this.olvFiles.Name = "olvFiles";
+            this.olvFiles.ShowGroups = false;
+            this.olvFiles.Size = new System.Drawing.Size(518, 516);
+            this.olvFiles.TabIndex = 1;
+            this.olvFiles.UseCompatibleStateImageBehavior = false;
+            this.olvFiles.View = System.Windows.Forms.View.Details;
+            this.olvFiles.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olvFiles_FormatRow);
             // 
-            // colFileName
+            // colFilename
             // 
-            this.colFileName.Text = "Name";
-            // 
-            // colFileSize
-            // 
-            this.colFileSize.Text = "File size";
+            this.colFilename.AspectName = "Name";
+            this.colFilename.CellPadding = null;
+            this.colFilename.Text = "File name";
             // 
             // panel1
             // 
@@ -201,6 +204,12 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(642, 27);
             this.panel1.TabIndex = 0;
+            // 
+            // colFilesize
+            // 
+            this.colFilesize.AspectName = "Length";
+            this.colFilesize.CellPadding = null;
+            this.colFilesize.Text = "File size";
             // 
             // Form1
             // 
@@ -222,6 +231,7 @@
             this.spltMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spltMain)).EndInit();
             this.spltMain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -241,10 +251,10 @@
         private System.Windows.Forms.SplitContainer spltMain;
         private System.Windows.Forms.TreeView tvNavigation;
         private System.Windows.Forms.ImageList imgLstIcons;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ColumnHeader colFileName;
-        private System.Windows.Forms.ColumnHeader colFileSize;
         private System.Windows.Forms.Panel panel1;
+        private BrightIdeasSoftware.ObjectListView olvFiles;
+        private BrightIdeasSoftware.OLVColumn colFilename;
+        private BrightIdeasSoftware.OLVColumn colFilesize;
     }
 }
 

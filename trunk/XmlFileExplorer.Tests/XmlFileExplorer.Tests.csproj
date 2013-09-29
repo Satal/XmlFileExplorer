@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="SerializerTests.cs" />
+    <Compile Include="XmlFormatter.cs" />
     <Compile Include="XsdValidatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
