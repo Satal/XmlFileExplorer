@@ -16,8 +16,10 @@ namespace XmlFileExplorer
 {
     public partial class Form1 : Form
     {
-        private readonly Color _validColor = Color.LightGreen;
-        private readonly Color _invalidColor = Color.LightPink;
+        private Color _validBackgroundColor;
+        private Color _validForegroundColor;
+        private Color _invalidBackgroundColor;
+        private Color _invalidForegroundColor;
         private FolderConfig CurrentFolderConfig { get; set; }
 
         public Form1()
@@ -25,9 +27,15 @@ namespace XmlFileExplorer
             InitializeComponent();
             SetUpAspectToStringConverters();
             PopulateTreeView();
-            OpenDirectory(@"C:\Users\satal_000\Documents\GitHub\XmlFileExplorer\trunk\Test Files\PurchaseOrder");
+            LoadAppearanceConfiguration();
         }
-        
+
+        private void LoadAppearanceConfiguration()
+        {
+            _validBackgroundColor = Settings.Default.ValidXmlBackgroundColor;
+            _invalidBackgroundColor = Settings.Default.InvalidXmlBackgroundColor;
+        }
+
         private void PopulateTreeView()
         {
             var info = new DirectoryInfo("C:\\");
@@ -167,11 +175,11 @@ namespace XmlFileExplorer
             var file = e.Model as FileInfo;
             if (file == null) return;
 
-            if (file.Extension == ".xml" && CurrentFolderConfig != null && CurrentFolderConfig.Schemas.Any())
-            {
-                e.Item.BackColor = IsXmlSchemaCompliant(file) ? _validColor : _invalidColor;
-            }
+            if (file.Extension != ".xml" || CurrentFolderConfig == null || !CurrentFolderConfig.Schemas.Any()) return;
 
+            var isSchemaCompliant = IsXmlSchemaCompliant(file);
+            e.Item.BackColor = isSchemaCompliant ? _validBackgroundColor : _invalidBackgroundColor;
+            e.Item.ForeColor = isSchemaCompliant ? _validForegroundColor : _invalidForegroundColor;
         }
 
         private void olvFiles_MouseDoubleClick(object sender, MouseEventArgs e)
