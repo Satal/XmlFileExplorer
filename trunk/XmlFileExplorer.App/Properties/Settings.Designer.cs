@@ -49,6 +49,30 @@ namespace XmlFileExplorer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
+        public global::System.Drawing.Color ValidXmlForegroundColor {
+            get {
+                return ((global::System.Drawing.Color)(this["ValidXmlForegroundColor"]));
+            }
+            set {
+                this["ValidXmlForegroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
+        public global::System.Drawing.Color InvalidXmlForegroundColor {
+            get {
+                return ((global::System.Drawing.Color)(this["InvalidXmlForegroundColor"]));
+            }
+            set {
+                this["InvalidXmlForegroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PaleGreen")]
         public global::System.Drawing.Color ValidXmlBackgroundColor {
             get {
@@ -68,30 +92,6 @@ namespace XmlFileExplorer.Properties {
             }
             set {
                 this["InvalidXmlBackgroundColor"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
-        public global::System.Drawing.Color ValidForegroundColor {
-            get {
-                return ((global::System.Drawing.Color)(this["ValidForegroundColor"]));
-            }
-            set {
-                this["ValidForegroundColor"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
-        public global::System.Drawing.Color InvalidForegroundColor {
-            get {
-                return ((global::System.Drawing.Color)(this["InvalidForegroundColor"]));
-            }
-            set {
-                this["InvalidForegroundColor"] = value;
             }
         }
     }

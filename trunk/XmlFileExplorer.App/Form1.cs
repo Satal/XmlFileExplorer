@@ -28,6 +28,8 @@ namespace XmlFileExplorer
             SetUpAspectToStringConverters();
             PopulateTreeView();
             LoadAppearanceConfiguration();
+
+            OpenDirectory(Settings.Default.LastViewedDirectory);
         }
 
         private void LoadAppearanceConfiguration()
@@ -111,6 +113,15 @@ namespace XmlFileExplorer
         }
 
         #region Directory TreeView
+
+        private static void PopulateNode(TreeNode node)
+        {
+            var dir = node.Tag as DirectoryInfo;
+
+            if (dir == null) return;
+
+            GetDirectories(dir.GetDirectories(), node);
+        }
 
         private static void GetDirectories(IEnumerable<DirectoryInfo> subDirs, TreeNode nodeToAddTo)
         {
@@ -252,21 +263,27 @@ namespace XmlFileExplorer
             var nodeCollection = tvNavigation.Nodes.Cast<TreeNode>().ToList();
             TreeNode node = null;
 
+            tvNavigation.BeginUpdate();
+
             foreach (var directoryInfo in dirList)
             {
-                node = nodeCollection.FirstOrDefault(n => n.Text == directoryInfo.Name);
-
-                if (node == null) break;
-
-                node.Expand();
-                
-                nodeCollection = node.Nodes.Cast<TreeNode>().ToList();
+                var info = directoryInfo;
+                foreach (var treeNode in nodeCollection.Where(n => n.Text == info.Name))
+                {
+                    node = treeNode;
+                    PopulateNode(node);
+                    node.Expand();
+                    nodeCollection = node.Nodes.Cast<TreeNode>().ToList();
+                    break;
+                }
             }
 
             if (node != null)
             {
                 tvNavigation.SelectedNode = node; 
             }
+
+            tvNavigation.EndUpdate();
         }
 
         private void mnuItmAbout_Click(object sender, EventArgs e)

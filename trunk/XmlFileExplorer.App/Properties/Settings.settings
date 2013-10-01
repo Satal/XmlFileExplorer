@@ -8,17 +8,17 @@
     <Setting Name="LastViewedDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ValidBackgroundColor" Type="System.Drawing.Color" Scope="User">
+    <Setting Name="ValidXmlForegroundColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Black</Value>
+    </Setting>
+    <Setting Name="InvalidXmlForegroundColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Black</Value>
+    </Setting>
+    <Setting Name="ValidXmlBackgroundColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">PaleGreen</Value>
     </Setting>
-    <Setting Name="InvalidBackgroundColor" Type="System.Drawing.Color" Scope="User">
+    <Setting Name="InvalidXmlBackgroundColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">LightPink</Value>
-    </Setting>
-    <Setting Name="ValidForegroundColor" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Black</Value>
-    </Setting>
-    <Setting Name="InvalidForegroundColor" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Black</Value>
     </Setting>
   </Settings>
 </SettingsFile>
