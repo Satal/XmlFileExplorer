@@ -1,6 +1,8 @@
-﻿using System;
+﻿using BrightIdeasSoftware;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,29 +25,9 @@ namespace XmlFileExplorer
             InitializeComponent();
             SetUpAspectToStringConverters();
             PopulateTreeView();
+            OpenDirectory(@"C:\Users\satal_000\Documents\GitHub\XmlFileExplorer\trunk\Test Files\PurchaseOrder");
         }
-
-        private void SetUpAspectToStringConverters()
-        {
-            // Specify the file size format
-            colFilesize.AspectToStringConverter = delegate(object value)
-                {
-                    var size = (long) value;
-                    var limits = new[] { 1024*1024*1024, 1024*1024, 1024};
-                    var units = new[] {"GB", "MB", "KB"};
-
-                    for (var i = 0; i < limits.Length; i++)
-                    {
-                        if (size >= limits[i])
-                        {
-                            return String.Format("{0:#,##0.##} {1}", ((double) size/limits[i]), units[i]);
-                        }
-                    }
-
-                    return String.Format("{0} bytes", size);
-                };
-        }
-
+        
         private void PopulateTreeView()
         {
             var info = new DirectoryInfo("C:\\");
@@ -60,7 +42,17 @@ namespace XmlFileExplorer
 
         private void ChangeDirectory(DirectoryInfo directory)
         {
-            var configFiles = directory.GetFiles("Folder.config", SearchOption.TopDirectoryOnly);
+            IEnumerable<FileInfo> configFiles = new FileInfo[0];
+
+            try
+            {
+                configFiles = directory.GetFiles("Folder.config", SearchOption.TopDirectoryOnly);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // We may not have been allowed to read the directory, in which
+                // case we will get an UnauthorizedAccessException thrown.
+            }
 
             CurrentFolderConfig = configFiles.Any() ? Serializer.Deserialize<FolderConfig>(File.ReadAllText(configFiles.First().FullName)) : null;
 
@@ -70,7 +62,15 @@ namespace XmlFileExplorer
         private void LoadFiles(DirectoryInfo directory)
         {
             olvFiles.Items.Clear();
-            olvFiles.AddObjects(directory.GetFiles());
+            try
+            {
+                olvFiles.AddObjects(directory.GetFiles());
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // We may not have been allowed to read the directory, in which
+                // case we will get an UnauthorizedAccessException thrown.
+            }
 
             foreach (ColumnHeader col in olvFiles.Columns)
             {
@@ -117,7 +117,8 @@ namespace XmlFileExplorer
                     var aNode = new TreeNode(subDir.Name, 0, 0)
                         {
                             Tag = subDir,
-                            ImageKey = Resources.FolderResourceName
+                            ImageKey = Resources.FolderResourceName,
+                            
                         };
 
                     // Add a dummmy node to the node so that it is expandable
@@ -126,7 +127,7 @@ namespace XmlFileExplorer
 
                     nodeToAddTo.Nodes.Add(aNode);
                 }
-                catch (UnauthorizedAccessException uaex)
+                catch (UnauthorizedAccessException)
                 {
                     // If we don't have permission to access this directory then don't display it.
                     // Eventually this should show the directory but with an icon that lets the user
@@ -143,9 +144,9 @@ namespace XmlFileExplorer
             GetDirectories(nodeDir.GetDirectories(), treeNode);
         }
 
-        private void tvNavigation_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void tvNavigation_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            var selectedDir = (DirectoryInfo) e.Node.Tag;
+            var selectedDir = (DirectoryInfo)e.Node.Tag;
             ChangeDirectory(selectedDir);
         }
 
@@ -159,7 +160,9 @@ namespace XmlFileExplorer
             ConfigurationManager.AppSettings["LastViewedDirectory"] = selectedDir.FullName;
         }
 
-        private void olvFiles_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
+        #region ObjectListView
+
+        private void olvFiles_FormatRow(object sender, FormatRowEventArgs e)
         {
             var file = e.Model as FileInfo;
             if (file == null) return;
@@ -169,6 +172,99 @@ namespace XmlFileExplorer
                 e.Item.BackColor = IsXmlSchemaCompliant(file) ? _validColor : _invalidColor;
             }
 
+        }
+
+        private void olvFiles_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void SetUpAspectToStringConverters()
+        {
+            // Specify the file size format
+            colFilesize.AspectToStringConverter = delegate(object value)
+            {
+                var size = (long)value;
+                var limits = new[] { 1024 * 1024 * 1024, 1024 * 1024, 1024 };
+                var units = new[] { "GB", "MB", "KB" };
+
+                for (var i = 0; i < limits.Length; i++)
+                {
+                    if (size >= limits[i])
+                    {
+                        return String.Format("{0:#,##0.##} {1}", ((double)size / limits[i]), units[i]);
+                    }
+                }
+
+                return String.Format("{0} bytes", size);
+            };
+        }
+
+        #endregion
+
+        // This method is called when we have specified we want to open a file
+        private void OpenFile()
+        {
+            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<FileInfo>())
+            {
+                Process.Start(selectedObject.FullName);
+            }
+        }
+
+        private void olvFiles_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            var item = e.Item as OLVListItem;
+            
+            if (item == null) return;
+            
+            var fileInfo = item.RowObject as FileInfo;
+
+            if (fileInfo != null)
+            {
+                DoDragDrop(fileInfo.FullName, DragDropEffects.Copy);
+            }
+        }
+
+        private void OpenDirectory(string path)
+        {
+            var dir = new DirectoryInfo(path);
+            var dirList = new List<DirectoryInfo>();
+            if (!dir.Exists) return;
+
+            var curDir = dir;
+            dirList.Add(curDir);
+            while (curDir != null)
+            {
+                dirList.Add(curDir);
+                curDir = curDir.Parent;
+            }
+
+            dirList.Reverse();
+
+            var nodeCollection = tvNavigation.Nodes.Cast<TreeNode>().ToList();
+            TreeNode node = null;
+
+            foreach (var directoryInfo in dirList)
+            {
+                node = nodeCollection.FirstOrDefault(n => n.Text == directoryInfo.Name);
+
+                if (node == null) break;
+
+                node.Expand();
+                
+                nodeCollection = node.Nodes.Cast<TreeNode>().ToList();
+            }
+
+            if (node != null)
+            {
+                tvNavigation.SelectedNode = node; 
+            }
+        }
+
+        private void mnuItmAbout_Click(object sender, EventArgs e)
+        {
+            var frm = new About();
+            frm.ShowDialog();
         }
     }
 }

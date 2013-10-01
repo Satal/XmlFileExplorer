@@ -36,16 +36,17 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.mnuItmAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.spltMain = new System.Windows.Forms.SplitContainer();
             this.tvNavigation = new System.Windows.Forms.TreeView();
             this.imgLstIcons = new System.Windows.Forms.ImageList(this.components);
             this.olvFiles = new BrightIdeasSoftware.ObjectListView();
             this.colFilename = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.panel1 = new System.Windows.Forms.Panel();
             this.colFilesize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.colCreated = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.colModified = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltMain)).BeginInit();
@@ -98,24 +99,17 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+            this.mnuItmAbout});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
-            // aboutToolStripMenuItem
+            // mnuItmAbout
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-            this.aboutToolStripMenuItem.Text = "&About";
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 579);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(648, 22);
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
+            this.mnuItmAbout.Name = "mnuItmAbout";
+            this.mnuItmAbout.Size = new System.Drawing.Size(152, 22);
+            this.mnuItmAbout.Text = "&About";
+            this.mnuItmAbout.Click += new System.EventHandler(this.mnuItmAbout_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -130,13 +124,13 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.945946F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 94.05405F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(648, 555);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(648, 577);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // spltMain
             // 
             this.spltMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.spltMain.Location = new System.Drawing.Point(3, 36);
+            this.spltMain.Location = new System.Drawing.Point(3, 37);
             this.spltMain.Name = "spltMain";
             // 
             // spltMain.Panel1
@@ -146,22 +140,23 @@
             // spltMain.Panel2
             // 
             this.spltMain.Panel2.Controls.Add(this.olvFiles);
-            this.spltMain.Size = new System.Drawing.Size(642, 516);
+            this.spltMain.Size = new System.Drawing.Size(642, 537);
             this.spltMain.SplitterDistance = 120;
             this.spltMain.TabIndex = 3;
             // 
             // tvNavigation
             // 
             this.tvNavigation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvNavigation.HideSelection = false;
             this.tvNavigation.ImageIndex = 0;
             this.tvNavigation.ImageList = this.imgLstIcons;
             this.tvNavigation.Location = new System.Drawing.Point(0, 0);
             this.tvNavigation.Name = "tvNavigation";
             this.tvNavigation.SelectedImageIndex = 0;
-            this.tvNavigation.Size = new System.Drawing.Size(120, 516);
+            this.tvNavigation.Size = new System.Drawing.Size(120, 537);
             this.tvNavigation.TabIndex = 0;
             this.tvNavigation.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvNavigation_BeforeExpand);
-            this.tvNavigation.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvNavigation_NodeMouseClick);
+            this.tvNavigation.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvNavigation_AfterSelect);
             // 
             // imgLstIcons
             // 
@@ -174,9 +169,13 @@
             // 
             this.olvFiles.AllColumns.Add(this.colFilename);
             this.olvFiles.AllColumns.Add(this.colFilesize);
+            this.olvFiles.AllColumns.Add(this.colCreated);
+            this.olvFiles.AllColumns.Add(this.colModified);
             this.olvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colFilename,
-            this.colFilesize});
+            this.colFilesize,
+            this.colCreated,
+            this.colModified});
             this.olvFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvFiles.FullRowSelect = true;
             this.olvFiles.HasCollapsibleGroups = false;
@@ -185,11 +184,13 @@
             this.olvFiles.Location = new System.Drawing.Point(0, 0);
             this.olvFiles.Name = "olvFiles";
             this.olvFiles.ShowGroups = false;
-            this.olvFiles.Size = new System.Drawing.Size(518, 516);
+            this.olvFiles.Size = new System.Drawing.Size(518, 537);
             this.olvFiles.TabIndex = 1;
             this.olvFiles.UseCompatibleStateImageBehavior = false;
             this.olvFiles.View = System.Windows.Forms.View.Details;
             this.olvFiles.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olvFiles_FormatRow);
+            this.olvFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.olvFiles_ItemDrag);
+            this.olvFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseDoubleClick);
             // 
             // colFilename
             // 
@@ -197,19 +198,33 @@
             this.colFilename.CellPadding = null;
             this.colFilename.Text = "File name";
             // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(642, 27);
-            this.panel1.TabIndex = 0;
-            // 
             // colFilesize
             // 
             this.colFilesize.AspectName = "Length";
             this.colFilesize.CellPadding = null;
             this.colFilesize.Text = "File size";
+            // 
+            // colCreated
+            // 
+            this.colCreated.AspectName = "CreationTime";
+            this.colCreated.CellPadding = null;
+            this.colCreated.DisplayIndex = 3;
+            this.colCreated.Text = "Created";
+            // 
+            // colModified
+            // 
+            this.colModified.AspectName = "LastWriteTime";
+            this.colModified.CellPadding = null;
+            this.colModified.DisplayIndex = 2;
+            this.colModified.Text = "Modified";
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(642, 28);
+            this.panel1.TabIndex = 0;
             // 
             // Form1
             // 
@@ -217,12 +232,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(648, 601);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "XML File Explorer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -245,16 +259,17 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripMenuItem mnuItmAbout;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.SplitContainer spltMain;
-        private System.Windows.Forms.TreeView tvNavigation;
         private System.Windows.Forms.ImageList imgLstIcons;
         private System.Windows.Forms.Panel panel1;
         private BrightIdeasSoftware.ObjectListView olvFiles;
         private BrightIdeasSoftware.OLVColumn colFilename;
         private BrightIdeasSoftware.OLVColumn colFilesize;
+        private BrightIdeasSoftware.OLVColumn colCreated;
+        private BrightIdeasSoftware.OLVColumn colModified;
+        private System.Windows.Forms.TreeView tvNavigation;
     }
 }
 
