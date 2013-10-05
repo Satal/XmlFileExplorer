@@ -101,6 +101,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\BackUnavailable.png" />
+    <None Include="Resources\BackAvailable.png" />
+    <None Include="Resources\BackHover.png" />
     <Content Include="Resources\document.ico" />
     <Content Include="Resources\folder.ico" />
     <Content Include="Resources\XmlFileExplorer.ico" />

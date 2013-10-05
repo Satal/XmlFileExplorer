@@ -1,13 +1,13 @@
-﻿using System.Collections.Specialized;
-using System.Runtime.InteropServices;
-using BrightIdeasSoftware;
+﻿using BrightIdeasSoftware;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using XmlFileExplorer.Domain;
 using XmlFileExplorer.Domain.Config;
@@ -24,8 +24,10 @@ namespace XmlFileExplorer
         private Color _invalidForegroundColor;
         private DirectoryInfo CurrentDirectory { get; set; }
         private FolderConfig CurrentFolderConfig { get; set; }
+        private readonly Stack<DirectoryInfo> _history = new Stack<DirectoryInfo>(); 
 
         private bool _formFinishedLoading = false;
+        private bool _openingDirectory = false;
 
         public Form1()
         {
@@ -47,18 +49,22 @@ namespace XmlFileExplorer
 
         private void PopulateTreeView()
         {
-            var info = new DirectoryInfo("C:\\");
-
-            if (info.Exists)
+            foreach (var drive in Directory.GetLogicalDrives().Select(d => new DirectoryInfo(d)))
             {
-                var rootNode = new TreeNode(info.Name) { Tag = info };
-                GetDirectories(info.GetDirectories(), rootNode);
+                var rootNode = new TreeNode(drive.Name) { Tag = drive };
                 tvNavigation.Nodes.Add(rootNode);
             }
         }
 
         private void ChangeDirectory(DirectoryInfo directory)
         {
+            if (CurrentDirectory != null && _formFinishedLoading)
+            {
+                _history.Push(CurrentDirectory);
+            }
+
+            CurrentDirectory = directory;
+            
             IEnumerable<FileInfo> configFiles = new FileInfo[0];
 
             try
@@ -70,16 +76,24 @@ namespace XmlFileExplorer
                 // We may not have been allowed to read the directory, in which
                 // case we will get an UnauthorizedAccessException thrown.
             }
+            catch (IOException)
+            {
+                // We may not have been allowed to read the directory, in which
+                // case we will get an UnauthorizedAccessException thrown.
+            }
 
-            CurrentDirectory = directory;
             CurrentFolderConfig = configFiles.Any() ? Serializer.Deserialize<FolderConfig>(File.ReadAllText(configFiles.First().FullName)) : null;
 
             LoadFiles(directory);
+            UpdateBackButtonImage();
         }
 
         private void LoadFiles(DirectoryInfo directory)
         {
+            olvFiles.BeginUpdate();
+
             olvFiles.Items.Clear();
+
             try
             {
                 olvFiles.AddObjects(directory.GetFiles());
@@ -94,6 +108,8 @@ namespace XmlFileExplorer
             {
                 col.Width = -2;
             }
+
+            olvFiles.EndUpdate();
         }
 
         private void RefreshFolder()
@@ -170,7 +186,7 @@ namespace XmlFileExplorer
 
         private void tvNavigation_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            if (_formFinishedLoading)
+            if (_formFinishedLoading && !_openingDirectory)
             {
                 var treeNode = e.Node;
                 var nodeDir = (DirectoryInfo)treeNode.Tag;
@@ -260,7 +276,6 @@ namespace XmlFileExplorer
         }
 
         #endregion
-
 
         #region Menu items
 
@@ -460,5 +475,22 @@ namespace XmlFileExplorer
         #endregion
 
         #endregion
+
+        private void pctBack_Click(object sender, EventArgs e)
+        {
+            if (!_history.Any()) return;
+
+            var dir = _history.Pop();
+            _openingDirectory = true;
+            OpenDirectory(dir.FullName);
+            _openingDirectory = false;
+
+            UpdateBackButtonImage();
+        }
+
+        private void UpdateBackButtonImage()
+        {
+            pctBack.Image = _history.Any() ? Resources.BackAvailable : Resources.BackUnavailable;
+        }
     }
 }

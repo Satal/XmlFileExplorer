@@ -48,7 +48,7 @@
             this.colCreated = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.colModified = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel2 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pctBack = new System.Windows.Forms.PictureBox();
             this.ctxRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -68,7 +68,7 @@
             this.spltMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).BeginInit();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pctBack)).BeginInit();
             this.ctxRightClick.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -247,20 +247,22 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.pictureBox1);
+            this.panel2.Controls.Add(this.pctBack);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(642, 24);
             this.panel2.TabIndex = 1;
             // 
-            // pictureBox1
+            // pctBack
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(2, 2);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.pctBack.Image = global::XmlFileExplorer.Properties.Resources.BackUnavailable;
+            this.pctBack.Location = new System.Drawing.Point(2, 2);
+            this.pctBack.Name = "pctBack";
+            this.pctBack.Size = new System.Drawing.Size(21, 21);
+            this.pctBack.TabIndex = 0;
+            this.pctBack.TabStop = false;
+            this.pctBack.Click += new System.EventHandler(this.pctBack_Click);
             // 
             // ctxRightClick
             // 
@@ -357,7 +359,7 @@
             this.spltMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).EndInit();
             this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pctBack)).EndInit();
             this.ctxRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -384,7 +386,7 @@
         private BrightIdeasSoftware.OLVColumn colCreated;
         private BrightIdeasSoftware.OLVColumn colModified;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pctBack;
         private System.Windows.Forms.ContextMenuStrip ctxRightClick;
         private System.Windows.Forms.ToolStripMenuItem ctxOpen;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
