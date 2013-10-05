@@ -1,4 +1,6 @@
-﻿using BrightIdeasSoftware;
+﻿using System.Collections.Specialized;
+using System.Runtime.InteropServices;
+using BrightIdeasSoftware;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -20,6 +22,7 @@ namespace XmlFileExplorer
         private Color _validForegroundColor;
         private Color _invalidBackgroundColor;
         private Color _invalidForegroundColor;
+        private DirectoryInfo CurrentDirectory { get; set; }
         private FolderConfig CurrentFolderConfig { get; set; }
 
         private bool _formFinishedLoading = false;
@@ -48,7 +51,7 @@ namespace XmlFileExplorer
 
             if (info.Exists)
             {
-                var rootNode = new TreeNode(info.Name) {Tag = info};
+                var rootNode = new TreeNode(info.Name) { Tag = info };
                 GetDirectories(info.GetDirectories(), rootNode);
                 tvNavigation.Nodes.Add(rootNode);
             }
@@ -68,6 +71,7 @@ namespace XmlFileExplorer
                 // case we will get an UnauthorizedAccessException thrown.
             }
 
+            CurrentDirectory = directory;
             CurrentFolderConfig = configFiles.Any() ? Serializer.Deserialize<FolderConfig>(File.ReadAllText(configFiles.First().FullName)) : null;
 
             LoadFiles(directory);
@@ -90,6 +94,11 @@ namespace XmlFileExplorer
             {
                 col.Width = -2;
             }
+        }
+
+        private void RefreshFolder()
+        {
+            LoadFiles(CurrentDirectory);
         }
 
         private bool IsXmlSchemaCompliant(FileInfo file)
@@ -141,7 +150,7 @@ namespace XmlFileExplorer
                         {
                             Tag = subDir,
                             ImageKey = Resources.FolderResourceName,
-                            
+
                         };
 
                     // Add a dummmy node to the node so that it is expandable
@@ -164,7 +173,7 @@ namespace XmlFileExplorer
             if (_formFinishedLoading)
             {
                 var treeNode = e.Node;
-                var nodeDir = (DirectoryInfo) treeNode.Tag;
+                var nodeDir = (DirectoryInfo)treeNode.Tag;
 
                 GetDirectories(nodeDir.GetDirectories(), treeNode);
             }
@@ -177,14 +186,6 @@ namespace XmlFileExplorer
         }
 
         #endregion
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (tvNavigation.SelectedNode == null) return;
-
-            var selectedDir = (DirectoryInfo) tvNavigation.SelectedNode.Tag;
-            ConfigurationManager.AppSettings["LastViewedDirectory"] = selectedDir.FullName;
-        }
 
         #region ObjectListView
 
@@ -226,6 +227,54 @@ namespace XmlFileExplorer
             };
         }
 
+        private void olvFiles_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            var item = e.Item as OLVListItem;
+
+            if (item == null) return;
+
+            var fileInfo = item.RowObject as FileInfo;
+
+            if (fileInfo != null)
+            {
+                DoDragDrop(fileInfo.FullName, DragDropEffects.Copy);
+            }
+        }
+
+        #endregion
+
+        #region Form events
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (tvNavigation.SelectedNode == null) return;
+
+            var selectedDir = (DirectoryInfo)tvNavigation.SelectedNode.Tag;
+            Settings.Default.LastViewedDirectory = selectedDir.FullName;
+            Settings.Default.Save();
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            _formFinishedLoading = true;
+        }
+
+        #endregion
+
+
+        #region Menu items
+
+        private void mnuItmAbout_Click(object sender, EventArgs e)
+        {
+            var frm = new About();
+            frm.ShowDialog();
+        }
+
+        private void mnuItmExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
         #endregion
 
         // This method is called when we have specified we want to open a file
@@ -234,20 +283,6 @@ namespace XmlFileExplorer
             foreach (var selectedObject in olvFiles.SelectedObjects.Cast<FileInfo>())
             {
                 Process.Start(selectedObject.FullName);
-            }
-        }
-
-        private void olvFiles_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            var item = e.Item as OLVListItem;
-            
-            if (item == null) return;
-            
-            var fileInfo = item.RowObject as FileInfo;
-
-            if (fileInfo != null)
-            {
-                DoDragDrop(fileInfo.FullName, DragDropEffects.Copy);
             }
         }
 
@@ -287,21 +322,143 @@ namespace XmlFileExplorer
 
             if (node != null)
             {
-                tvNavigation.SelectedNode = node; 
+                tvNavigation.SelectedNode = node;
             }
 
             tvNavigation.EndUpdate();
         }
 
-        private void mnuItmAbout_Click(object sender, EventArgs e)
+        #region Right click
+        
+        private void olvFiles_MouseUp(object sender, MouseEventArgs e)
         {
-            var frm = new About();
-            frm.ShowDialog();
+            if (e.Button == MouseButtons.Right)
+            {
+                if (olvFiles.FocusedItem.Bounds.Contains(e.Location))
+                {
+                    ctxRightClick.Show(Cursor.Position);
+                }
+            }
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
+        private void ctxProperties_Click(object sender, EventArgs e)
         {
-            _formFinishedLoading = true;
+            var file = olvFiles.SelectedObject as FileInfo;
+            if (file == null) return;
+            ShowFileProperties(file.FullName);
         }
+
+        private void ctxRename_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ctxDelete_Click(object sender, EventArgs e)
+        {
+            var files = olvFiles.SelectedObjects.Cast<FileInfo>().ToList();
+            var message = "Are you sure you wish to delete these files?";
+
+            if (!files.Any()) return;
+            
+            if (files.Count() == 1)
+            {
+                message = String.Format("Are you sure you wish to delete '{0}'", files.First().Name);
+            }
+
+            if (MessageBox.Show(message, @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                MessageBoxDefaultButton.Button1) != DialogResult.Yes) return;
+
+            foreach (var fileInfo in files)
+            {
+                fileInfo.Delete();
+            }
+
+            RefreshFolder();
+        }
+
+        private void ctxCopy_Click(object sender, EventArgs e)
+        {
+            var paths = GetSelectedFilesStringCollection();
+
+            Clipboard.Clear();
+            Clipboard.SetFileDropList(paths);
+        }
+
+        private StringCollection GetSelectedFilesStringCollection()
+        {
+            var paths = new StringCollection();
+
+            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<FileInfo>())
+            {
+                paths.Add(selectedObject.FullName);
+            }
+            return paths;
+        }
+
+        private void ctxCut_Click(object sender, EventArgs e)
+        {
+            var moveEffect = new byte[] { 2, 0, 0, 0 };
+            using (var dropEffect = new MemoryStream())
+            {
+                dropEffect.Write(moveEffect, 0, moveEffect.Length);
+
+                var data = new DataObject();
+                data.SetFileDropList(GetSelectedFilesStringCollection());
+                data.SetData("Preferred DropEffect", dropEffect);
+
+                Clipboard.Clear();
+                Clipboard.SetDataObject(data, true);
+            }
+        }
+
+        private void ctxOpen_Click(object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+
+        #region Properties Dialog box
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        static extern bool ShellExecuteEx(ref ShellExecuteInfo lpExecInfo);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct ShellExecuteInfo
+        {
+            public int cbSize;
+            public uint fMask;
+            public IntPtr hwnd;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpVerb;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpFile;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpParameters;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpDirectory;
+            public int nShow;
+            public IntPtr hInstApp;
+            public IntPtr lpIDList;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpClass;
+            public IntPtr hkeyClass;
+            public uint dwHotKey;
+            public IntPtr hIcon;
+            public IntPtr hProcess;
+        }
+
+        private const int SwShow = 5;
+        private const uint SeeMaskInvokeidlist = 12;
+        public static bool ShowFileProperties(string filename)
+        {
+            var info = new ShellExecuteInfo();
+            info.cbSize = Marshal.SizeOf(info);
+            info.lpVerb = "properties";
+            info.lpFile = filename;
+            info.nShow = SwShow;
+            info.fMask = SeeMaskInvokeidlist;
+            return ShellExecuteEx(ref info);
+        }
+        #endregion
+
+        #endregion
     }
 }

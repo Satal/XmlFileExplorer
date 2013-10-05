@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuItmExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +47,18 @@
             this.colFilesize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.colCreated = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.colModified = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.ctxRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ctxCut = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.ctxDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.ctxProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -55,6 +67,9 @@
             this.spltMain.Panel2.SuspendLayout();
             this.spltMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).BeginInit();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.ctxRightClick.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -72,16 +87,17 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
+            this.mnuItmExit});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
-            // exitToolStripMenuItem
+            // mnuItmExit
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
-            this.exitToolStripMenuItem.Text = "E&xit";
+            this.mnuItmExit.Name = "mnuItmExit";
+            this.mnuItmExit.Size = new System.Drawing.Size(92, 22);
+            this.mnuItmExit.Text = "E&xit";
+            this.mnuItmExit.Click += new System.EventHandler(this.mnuItmExit_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -116,11 +132,13 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(648, 577);
@@ -130,9 +148,9 @@
             // 
             this.panel1.Controls.Add(this.spltMain);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Location = new System.Drawing.Point(3, 33);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(642, 513);
+            this.panel1.Size = new System.Drawing.Size(642, 486);
             this.panel1.TabIndex = 0;
             // 
             // spltMain
@@ -148,7 +166,7 @@
             // spltMain.Panel2
             // 
             this.spltMain.Panel2.Controls.Add(this.olvFiles);
-            this.spltMain.Size = new System.Drawing.Size(642, 513);
+            this.spltMain.Size = new System.Drawing.Size(642, 486);
             this.spltMain.SplitterDistance = 120;
             this.spltMain.TabIndex = 4;
             // 
@@ -161,7 +179,7 @@
             this.tvNavigation.Location = new System.Drawing.Point(0, 0);
             this.tvNavigation.Name = "tvNavigation";
             this.tvNavigation.SelectedImageIndex = 0;
-            this.tvNavigation.Size = new System.Drawing.Size(120, 513);
+            this.tvNavigation.Size = new System.Drawing.Size(120, 486);
             this.tvNavigation.TabIndex = 0;
             this.tvNavigation.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvNavigation_BeforeExpand);
             this.tvNavigation.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvNavigation_AfterSelect);
@@ -192,13 +210,14 @@
             this.olvFiles.Location = new System.Drawing.Point(0, 0);
             this.olvFiles.Name = "olvFiles";
             this.olvFiles.ShowGroups = false;
-            this.olvFiles.Size = new System.Drawing.Size(518, 513);
+            this.olvFiles.Size = new System.Drawing.Size(518, 486);
             this.olvFiles.TabIndex = 1;
             this.olvFiles.UseCompatibleStateImageBehavior = false;
             this.olvFiles.View = System.Windows.Forms.View.Details;
             this.olvFiles.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olvFiles_FormatRow);
             this.olvFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.olvFiles_ItemDrag);
             this.olvFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseDoubleClick);
+            this.olvFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseUp);
             // 
             // colFilename
             // 
@@ -226,6 +245,95 @@
             this.colModified.DisplayIndex = 2;
             this.colModified.Text = "Modified";
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.pictureBox1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(642, 24);
+            this.panel2.TabIndex = 1;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(2, 2);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
+            // ctxRightClick
+            // 
+            this.ctxRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxOpen,
+            this.toolStripSeparator1,
+            this.ctxCut,
+            this.ctxCopy,
+            this.toolStripSeparator3,
+            this.ctxDelete,
+            this.ctxRename,
+            this.toolStripSeparator2,
+            this.ctxProperties});
+            this.ctxRightClick.Name = "ctxRightClick";
+            this.ctxRightClick.Size = new System.Drawing.Size(128, 154);
+            // 
+            // ctxOpen
+            // 
+            this.ctxOpen.Name = "ctxOpen";
+            this.ctxOpen.Size = new System.Drawing.Size(127, 22);
+            this.ctxOpen.Text = "Open";
+            this.ctxOpen.Click += new System.EventHandler(this.ctxOpen_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(124, 6);
+            // 
+            // ctxCut
+            // 
+            this.ctxCut.Name = "ctxCut";
+            this.ctxCut.Size = new System.Drawing.Size(127, 22);
+            this.ctxCut.Text = "Cut";
+            this.ctxCut.Click += new System.EventHandler(this.ctxCut_Click);
+            // 
+            // ctxCopy
+            // 
+            this.ctxCopy.Name = "ctxCopy";
+            this.ctxCopy.Size = new System.Drawing.Size(127, 22);
+            this.ctxCopy.Text = "Copy";
+            this.ctxCopy.Click += new System.EventHandler(this.ctxCopy_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(124, 6);
+            // 
+            // ctxDelete
+            // 
+            this.ctxDelete.Name = "ctxDelete";
+            this.ctxDelete.Size = new System.Drawing.Size(127, 22);
+            this.ctxDelete.Text = "Delete";
+            this.ctxDelete.Click += new System.EventHandler(this.ctxDelete_Click);
+            // 
+            // ctxRename
+            // 
+            this.ctxRename.Name = "ctxRename";
+            this.ctxRename.Size = new System.Drawing.Size(127, 22);
+            this.ctxRename.Text = "Rename";
+            this.ctxRename.Click += new System.EventHandler(this.ctxRename_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(124, 6);
+            // 
+            // ctxProperties
+            // 
+            this.ctxProperties.Name = "ctxProperties";
+            this.ctxProperties.Size = new System.Drawing.Size(127, 22);
+            this.ctxProperties.Text = "Properties";
+            this.ctxProperties.Click += new System.EventHandler(this.ctxProperties_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -248,6 +356,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.spltMain)).EndInit();
             this.spltMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).EndInit();
+            this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.ctxRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -257,7 +368,7 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuItmExit;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
@@ -272,6 +383,18 @@
         private BrightIdeasSoftware.OLVColumn colFilesize;
         private BrightIdeasSoftware.OLVColumn colCreated;
         private BrightIdeasSoftware.OLVColumn colModified;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ContextMenuStrip ctxRightClick;
+        private System.Windows.Forms.ToolStripMenuItem ctxOpen;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem ctxCut;
+        private System.Windows.Forms.ToolStripMenuItem ctxCopy;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem ctxDelete;
+        private System.Windows.Forms.ToolStripMenuItem ctxRename;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem ctxProperties;
     }
 }
 
