@@ -523,26 +523,9 @@ namespace XmlFileExplorer
             if (e.KeyCode != Keys.Enter && e.KeyCode != Keys.Return) return;
             e.Handled = true;
             e.SuppressKeyPress = true;
-            var dir = new DirectoryInfo(txtDirectory.Text);
-            if (dir.Exists)
-            {
-                OpenDirectory(dir.FullName);
-                olvFiles.Focus();
-            }
-            else
-            {
-                var file = new FileInfo(txtDirectory.Text);
-
-                if (file.Exists)
-                {
-                    OpenFile(file.FullName);
-                }
-                else
-                {
-                    MessageBox.Show(@"The directory you have specified does not exist", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+            ProcessAddressBar();
         }
+
         private bool _alreadyFocused;
 
         void txtDirectory_Leave(object sender, EventArgs e)
@@ -552,9 +535,6 @@ namespace XmlFileExplorer
 
         void txtDirectory_MouseUp(object sender, MouseEventArgs e)
         {
-            // Web browsers like Google Chrome select the text on mouse up.
-            // They only do it if the textbox isn't already focused,
-            // and if the user hasn't selected all text.
             if (_alreadyFocused || txtDirectory.SelectionLength != 0) return;
 
             _alreadyFocused = true;
@@ -599,5 +579,49 @@ namespace XmlFileExplorer
         }
 
         #endregion
+
+        #region Go button
+
+        private void pctGo_Click(object sender, EventArgs e)
+        {
+            ProcessAddressBar();
+        }
+
+        private void pctGo_MouseEnter(object sender, EventArgs e)
+        {
+            pctGo.Image = Resources.GoHover;
+        }
+
+        private void pctGo_MouseLeave(object sender, EventArgs e)
+        {
+            pctGo.Image = Resources.Go;
+        }
+
+        #endregion
+
+        private void ProcessAddressBar()
+        {
+            var dir = new DirectoryInfo(txtDirectory.Text);
+
+            if (dir.Exists)
+            {
+                OpenDirectory(dir.FullName);
+                olvFiles.Focus();
+            }
+            else
+            {
+                var file = new FileInfo(txtDirectory.Text);
+
+                if (file.Exists)
+                {
+                    OpenFile(file.FullName);
+                }
+                else
+                {
+                    MessageBox.Show(@"The directory you have specified does not exist", @"Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                }
+            }
+        }
     }
 }

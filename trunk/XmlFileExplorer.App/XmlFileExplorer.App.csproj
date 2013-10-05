@@ -108,6 +108,8 @@
     <Content Include="Resources\folder.ico" />
     <None Include="Resources\UpALevelHover.png" />
     <None Include="Resources\UpALevel.png" />
+    <None Include="Resources\Go.png" />
+    <None Include="Resources\GoHover.png" />
     <Content Include="Resources\XmlFileExplorer.ico" />
   </ItemGroup>
   <ItemGroup>

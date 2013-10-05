@@ -48,6 +48,7 @@
             this.colCreated = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.colModified = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel2 = new System.Windows.Forms.Panel();
+            this.pctGo = new System.Windows.Forms.PictureBox();
             this.pctUpALevel = new System.Windows.Forms.PictureBox();
             this.txtDirectory = new System.Windows.Forms.TextBox();
             this.pctBack = new System.Windows.Forms.PictureBox();
@@ -71,6 +72,7 @@
             this.spltMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pctGo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctUpALevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctBack)).BeginInit();
             this.ctxRightClick.SuspendLayout();
@@ -251,6 +253,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.pctGo);
             this.panel2.Controls.Add(this.pctUpALevel);
             this.panel2.Controls.Add(this.txtDirectory);
             this.panel2.Controls.Add(this.pctBack);
@@ -259,6 +262,19 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(642, 24);
             this.panel2.TabIndex = 1;
+            // 
+            // pctGo
+            // 
+            this.pctGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pctGo.Image = global::XmlFileExplorer.Properties.Resources.Go;
+            this.pctGo.Location = new System.Drawing.Point(615, 2);
+            this.pctGo.Name = "pctGo";
+            this.pctGo.Size = new System.Drawing.Size(20, 20);
+            this.pctGo.TabIndex = 4;
+            this.pctGo.TabStop = false;
+            this.pctGo.Click += new System.EventHandler(this.pctGo_Click);
+            this.pctGo.MouseEnter += new System.EventHandler(this.pctGo_MouseEnter);
+            this.pctGo.MouseLeave += new System.EventHandler(this.pctGo_MouseLeave);
             // 
             // pctUpALevel
             // 
@@ -395,6 +411,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pctGo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctUpALevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctBack)).EndInit();
             this.ctxRightClick.ResumeLayout(false);
@@ -437,6 +454,7 @@
         private System.Windows.Forms.TextBox txtDirectory;
         private System.Windows.Forms.PictureBox pctUpALevel;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.PictureBox pctGo;
     }
 }
 
