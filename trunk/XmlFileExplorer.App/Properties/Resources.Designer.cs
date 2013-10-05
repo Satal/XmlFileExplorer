@@ -98,5 +98,25 @@ namespace XmlFileExplorer.Properties {
                 return ResourceManager.GetString("FolderResourceName", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UpALevel {
+            get {
+                object obj = ResourceManager.GetObject("UpALevel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UpALevelHover {
+            get {
+                object obj = ResourceManager.GetObject("UpALevelHover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

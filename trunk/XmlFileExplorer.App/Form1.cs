@@ -85,6 +85,7 @@ namespace XmlFileExplorer
             CurrentFolderConfig = configFiles.Any() ? Serializer.Deserialize<FolderConfig>(File.ReadAllText(configFiles.First().FullName)) : null;
 
             LoadFiles(directory);
+            txtDirectory.Text = directory.FullName;
             UpdateBackButtonImage();
         }
 
@@ -292,13 +293,17 @@ namespace XmlFileExplorer
 
         #endregion
 
-        // This method is called when we have specified we want to open a file
         private void OpenFile()
         {
             foreach (var selectedObject in olvFiles.SelectedObjects.Cast<FileInfo>())
             {
-                Process.Start(selectedObject.FullName);
+                OpenFile(selectedObject.FullName);
             }
+        }
+
+        private static void OpenFile(string path)
+        {
+            Process.Start(path);
         }
 
         private void OpenDirectory(string path)
@@ -476,6 +481,7 @@ namespace XmlFileExplorer
 
         #endregion
 
+        #region Back button
         private void pctBack_Click(object sender, EventArgs e)
         {
             if (!_history.Any()) return;
@@ -488,9 +494,110 @@ namespace XmlFileExplorer
             UpdateBackButtonImage();
         }
 
+        private void pctBack_MouseLeave(object sender, EventArgs e)
+        {
+            UpdateBackButtonImage();
+        }
+
+        private void pctBack_MouseEnter(object sender, EventArgs e)
+        {
+            if (!_history.Any()) return;
+
+            pctBack.Image = Resources.BackHover;
+            var prevDir = _history.Peek();
+            toolTip1.Show(
+                String.Format("Go back to '{0}",
+                              prevDir.Name),
+                pctBack);
+        }
+
         private void UpdateBackButtonImage()
         {
             pctBack.Image = _history.Any() ? Resources.BackAvailable : Resources.BackUnavailable;
         }
+        #endregion
+
+        #region Address bar
+        private void txtDirectory_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter && e.KeyCode != Keys.Return) return;
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+            var dir = new DirectoryInfo(txtDirectory.Text);
+            if (dir.Exists)
+            {
+                OpenDirectory(dir.FullName);
+                olvFiles.Focus();
+            }
+            else
+            {
+                var file = new FileInfo(txtDirectory.Text);
+
+                if (file.Exists)
+                {
+                    OpenFile(file.FullName);
+                }
+                else
+                {
+                    MessageBox.Show(@"The directory you have specified does not exist", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        private bool _alreadyFocused;
+
+        void txtDirectory_Leave(object sender, EventArgs e)
+        {
+            _alreadyFocused = false;
+        }
+
+        void txtDirectory_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Web browsers like Google Chrome select the text on mouse up.
+            // They only do it if the textbox isn't already focused,
+            // and if the user hasn't selected all text.
+            if (_alreadyFocused || txtDirectory.SelectionLength != 0) return;
+
+            _alreadyFocused = true;
+            txtDirectory.SelectAll();
+        }
+
+        private void txtDirectory_Enter(object sender, EventArgs e)
+        {
+            if (MouseButtons != MouseButtons.None) return;
+            txtDirectory.SelectAll();
+            _alreadyFocused = true;
+        }
+
+        #endregion
+
+        #region Up a level
+
+        private void pctUpALevel_MouseLeave(object sender, EventArgs e)
+        {
+            pctUpALevel.Image = Resources.UpALevel;
+        }
+
+        private void pctUpALevel_MouseEnter(object sender, EventArgs e)
+        {
+            pctUpALevel.Image = Resources.UpALevelHover;
+            var parentDir = CurrentDirectory.Parent;
+            if (parentDir == null) return;
+
+            toolTip1.Show(String.Format("Up a level to '{0}'",
+                parentDir.Name),
+                pctUpALevel);
+        }
+
+        private void pctUpALevel_MouseClick(object sender, MouseEventArgs e)
+        {
+            var parentDir = CurrentDirectory.Parent;
+
+            if (parentDir != null)
+            {
+                ChangeDirectory(parentDir);
+            }
+        }
+
+        #endregion
     }
 }

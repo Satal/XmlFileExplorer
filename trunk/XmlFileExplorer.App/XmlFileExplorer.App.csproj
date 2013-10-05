@@ -106,6 +106,8 @@
     <None Include="Resources\BackHover.png" />
     <Content Include="Resources\document.ico" />
     <Content Include="Resources\folder.ico" />
+    <None Include="Resources\UpALevelHover.png" />
+    <None Include="Resources\UpALevel.png" />
     <Content Include="Resources\XmlFileExplorer.ico" />
   </ItemGroup>
   <ItemGroup>

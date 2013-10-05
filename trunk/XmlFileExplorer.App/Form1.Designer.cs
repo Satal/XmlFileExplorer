@@ -48,6 +48,8 @@
             this.colCreated = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.colModified = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel2 = new System.Windows.Forms.Panel();
+            this.pctUpALevel = new System.Windows.Forms.PictureBox();
+            this.txtDirectory = new System.Windows.Forms.TextBox();
             this.pctBack = new System.Windows.Forms.PictureBox();
             this.ctxRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +61,7 @@
             this.ctxRename = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.ctxProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -68,6 +71,7 @@
             this.spltMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pctUpALevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctBack)).BeginInit();
             this.ctxRightClick.SuspendLayout();
             this.SuspendLayout();
@@ -247,12 +251,40 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.pctUpALevel);
+            this.panel2.Controls.Add(this.txtDirectory);
             this.panel2.Controls.Add(this.pctBack);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(642, 24);
             this.panel2.TabIndex = 1;
+            // 
+            // pctUpALevel
+            // 
+            this.pctUpALevel.Image = global::XmlFileExplorer.Properties.Resources.UpALevel;
+            this.pctUpALevel.Location = new System.Drawing.Point(98, 0);
+            this.pctUpALevel.Name = "pctUpALevel";
+            this.pctUpALevel.Size = new System.Drawing.Size(24, 24);
+            this.pctUpALevel.TabIndex = 3;
+            this.pctUpALevel.TabStop = false;
+            this.pctUpALevel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pctUpALevel_MouseClick);
+            this.pctUpALevel.MouseEnter += new System.EventHandler(this.pctUpALevel_MouseEnter);
+            this.pctUpALevel.MouseLeave += new System.EventHandler(this.pctUpALevel_MouseLeave);
+            // 
+            // txtDirectory
+            // 
+            this.txtDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDirectory.Location = new System.Drawing.Point(124, 2);
+            this.txtDirectory.Name = "txtDirectory";
+            this.txtDirectory.Size = new System.Drawing.Size(492, 20);
+            this.txtDirectory.TabIndex = 2;
+            this.txtDirectory.Enter += new System.EventHandler(this.txtDirectory_Enter);
+            this.txtDirectory.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDirectory_KeyDown);
+            this.txtDirectory.Leave += new System.EventHandler(this.txtDirectory_Leave);
+            this.txtDirectory.MouseUp += new System.Windows.Forms.MouseEventHandler(this.txtDirectory_MouseUp);
             // 
             // pctBack
             // 
@@ -263,6 +295,8 @@
             this.pctBack.TabIndex = 0;
             this.pctBack.TabStop = false;
             this.pctBack.Click += new System.EventHandler(this.pctBack_Click);
+            this.pctBack.MouseEnter += new System.EventHandler(this.pctBack_MouseEnter);
+            this.pctBack.MouseLeave += new System.EventHandler(this.pctBack_MouseLeave);
             // 
             // ctxRightClick
             // 
@@ -345,6 +379,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(664, 640);
             this.Name = "Form1";
             this.Text = "XML File Explorer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -359,6 +394,8 @@
             this.spltMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvFiles)).EndInit();
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pctUpALevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctBack)).EndInit();
             this.ctxRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -397,6 +434,9 @@
         private System.Windows.Forms.ToolStripMenuItem ctxRename;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem ctxProperties;
+        private System.Windows.Forms.TextBox txtDirectory;
+        private System.Windows.Forms.PictureBox pctUpALevel;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
