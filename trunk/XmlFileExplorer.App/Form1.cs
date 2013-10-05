@@ -22,6 +22,8 @@ namespace XmlFileExplorer
         private Color _invalidForegroundColor;
         private FolderConfig CurrentFolderConfig { get; set; }
 
+        private bool _formFinishedLoading = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -35,7 +37,9 @@ namespace XmlFileExplorer
         private void LoadAppearanceConfiguration()
         {
             _validBackgroundColor = Settings.Default.ValidXmlBackgroundColor;
+            _validForegroundColor = Settings.Default.ValidXmlForegroundColor;
             _invalidBackgroundColor = Settings.Default.InvalidXmlBackgroundColor;
+            _invalidForegroundColor = Settings.Default.InvalidXmlForegroundColor;
         }
 
         private void PopulateTreeView()
@@ -157,10 +161,13 @@ namespace XmlFileExplorer
 
         private void tvNavigation_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            var treeNode = e.Node;
-            var nodeDir = (DirectoryInfo) treeNode.Tag;
+            if (_formFinishedLoading)
+            {
+                var treeNode = e.Node;
+                var nodeDir = (DirectoryInfo) treeNode.Tag;
 
-            GetDirectories(nodeDir.GetDirectories(), treeNode);
+                GetDirectories(nodeDir.GetDirectories(), treeNode);
+            }
         }
 
         private void tvNavigation_AfterSelect(object sender, TreeViewEventArgs e)
@@ -290,6 +297,11 @@ namespace XmlFileExplorer
         {
             var frm = new About();
             frm.ShowDialog();
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            _formFinishedLoading = true;
         }
     }
 }
