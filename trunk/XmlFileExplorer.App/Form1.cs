@@ -223,6 +223,7 @@ namespace XmlFileExplorer
 
             if (file.FileInfo.Extension != ".xml") return;
 
+            file.ValidationErrors.Clear();
             foreach (var validator in _validators)
             {
                 file.ValidationErrors.AddRange(validator.ValidateFile(file.FileInfo.FullName));
