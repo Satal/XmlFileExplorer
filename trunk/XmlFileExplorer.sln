@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlFileExplorer.Tests", "Xm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlFileExplorer.Domain", "XmlFileExplorer.Domain\XmlFileExplorer.Domain.csproj", "{87AF0E0A-1B1A-463D-A991-3EF69F93A5AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlFileExplorer.Validators", "XmlFileExplorer.Validators\XmlFileExplorer.Validators.csproj", "{CE689EBF-2C0B-46B8-B12B-4BFCD8287F92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{87AF0E0A-1B1A-463D-A991-3EF69F93A5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87AF0E0A-1B1A-463D-A991-3EF69F93A5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87AF0E0A-1B1A-463D-A991-3EF69F93A5AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE689EBF-2C0B-46B8-B12B-4BFCD8287F92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE689EBF-2C0B-46B8-B12B-4BFCD8287F92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE689EBF-2C0B-46B8-B12B-4BFCD8287F92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE689EBF-2C0B-46B8-B12B-4BFCD8287F92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,15 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using XmlFileExplorer.Domain;
-using XmlFileExplorer.Domain.Config;
 using XmlFileExplorer.Domain.Validation;
 using XmlFileExplorer.Properties;
 
@@ -18,13 +20,15 @@ namespace XmlFileExplorer
 {
     public partial class Form1 : Form
     {
+        [ImportMany(typeof(IValidator))]
+        private IEnumerable<IValidator> _validators; 
+
         private Color _validBackgroundColor;
         private Color _validForegroundColor;
         private Color _invalidBackgroundColor;
         private Color _invalidForegroundColor;
         private DirectoryInfo CurrentDirectory { get; set; }
-        private FolderConfig CurrentFolderConfig { get; set; }
-        private readonly Stack<DirectoryInfo> _history = new Stack<DirectoryInfo>(); 
+        private readonly Stack<DirectoryInfo> _history = new Stack<DirectoryInfo>();
 
         private bool _formFinishedLoading = false;
         private bool _openingDirectory = false;
@@ -32,11 +36,22 @@ namespace XmlFileExplorer
         public Form1()
         {
             InitializeComponent();
-            SetUpAspectToStringConverters();
+            SetUpOlvDelegates();
             PopulateTreeView();
             LoadAppearanceConfiguration();
-
+            LoadValidators();
             OpenDirectory(Settings.Default.LastViewedDirectory);
+        }
+
+        private void LoadValidators()
+        {
+            var catalog = new AggregateCatalog();
+            foreach (var dll in Directory.GetFiles(Application.StartupPath, "*.dll"))
+            {
+                catalog.Catalogs.Add(new AssemblyCatalog(Assembly.LoadFrom(dll)));
+            }
+            var container = new CompositionContainer(catalog);
+            container.ComposeParts(this);
         }
 
         private void LoadAppearanceConfiguration()
@@ -65,25 +80,6 @@ namespace XmlFileExplorer
 
             CurrentDirectory = directory;
             
-            IEnumerable<FileInfo> configFiles = new FileInfo[0];
-
-            try
-            {
-                configFiles = directory.GetFiles("Folder.config", SearchOption.TopDirectoryOnly);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // We may not have been allowed to read the directory, in which
-                // case we will get an UnauthorizedAccessException thrown.
-            }
-            catch (IOException)
-            {
-                // We may not have been allowed to read the directory, in which
-                // case we will get an UnauthorizedAccessException thrown.
-            }
-
-            CurrentFolderConfig = configFiles.Any() ? Serializer.Deserialize<FolderConfig>(File.ReadAllText(configFiles.First().FullName)) : null;
-
             LoadFiles(directory);
             txtDirectory.Text = directory.FullName;
             UpdateBackButtonImage();
@@ -97,7 +93,7 @@ namespace XmlFileExplorer
 
             try
             {
-                olvFiles.AddObjects(directory.GetFiles());
+                olvFiles.AddObjects(directory.GetFiles().Select(f => new XfeFileInfo(f)).ToList());
             }
             catch (UnauthorizedAccessException)
             {
@@ -118,28 +114,42 @@ namespace XmlFileExplorer
             LoadFiles(CurrentDirectory);
         }
 
-        private bool IsXmlSchemaCompliant(FileInfo file)
+        private void SetUpOlvDelegates()
         {
-            // If we are not 
-            if (CurrentFolderConfig == null || !CurrentFolderConfig.Schemas.Any()) return true;
-
-            var validator = new XsdValidator();
-            foreach (var schema in CurrentFolderConfig.Schemas)
+            // Specify the file size format
+            colFilesize.AspectToStringConverter = delegate(object value)
             {
-                if (Path.IsPathRooted(schema))
+                var size = (long)value;
+                var limits = new[] { 1024 * 1024 * 1024, 1024 * 1024, 1024 };
+                var units = new[] { "GB", "MB", "KB" };
+
+                for (var i = 0; i < limits.Length; i++)
                 {
-                    validator.AddSchema(schema);
-                }
-                else
-                {
-                    if (file.Directory != null)
+                    if (size >= limits[i])
                     {
-                        validator.AddSchema(Path.Combine(file.Directory.FullName, schema));
+                        return String.Format("{0:#,##0.##} {1}", ((double)size / limits[i]), units[i]);
                     }
                 }
-            }
 
-            return validator.IsValid(file.FullName);
+                return String.Format("{0} bytes", size);
+            };
+            
+            colSeverity.AspectGetter = rowObject => ((ValidationError) rowObject).ErrorSeverity;
+            colSeverity.AspectToStringConverter = value => String.Empty;
+            colSeverity.GroupKeyGetter = rowObject => ((ValidationError)rowObject).ErrorSeverity;
+            colSeverity.GroupKeyToTitleConverter = key => ((ErrorSeverity)key).ToString();
+            colSeverity.ImageGetter = delegate(object rowObject)
+                {
+                    switch (((ValidationError)rowObject).ErrorSeverity)
+                    {
+                        case ErrorSeverity.Error:
+                            return "Error";
+                        case ErrorSeverity.Warning:
+                            return "Warning";
+                        default:
+                            return "Error";
+                    }
+                };
         }
 
         #region Directory TreeView
@@ -204,44 +214,30 @@ namespace XmlFileExplorer
 
         #endregion
 
-        #region ObjectListView
+        #region olvFiles events
 
         private void olvFiles_FormatRow(object sender, FormatRowEventArgs e)
         {
-            var file = e.Model as FileInfo;
+            var file = e.Model as XfeFileInfo;
             if (file == null) return;
 
-            if (file.Extension != ".xml" || CurrentFolderConfig == null || !CurrentFolderConfig.Schemas.Any()) return;
+            if (file.FileInfo.Extension != ".xml") return;
 
-            var isSchemaCompliant = IsXmlSchemaCompliant(file);
-            e.Item.BackColor = isSchemaCompliant ? _validBackgroundColor : _invalidBackgroundColor;
-            e.Item.ForeColor = isSchemaCompliant ? _validForegroundColor : _invalidForegroundColor;
+            foreach (var validator in _validators)
+            {
+                file.ValidationErrors.AddRange(validator.ValidateFile(file.FileInfo.FullName));
+            }
+
+
+            var passedAll = !file.ValidationErrors.Any();
+
+            e.Item.BackColor = passedAll ? _validBackgroundColor : _invalidBackgroundColor;
+            e.Item.ForeColor = passedAll ? _validForegroundColor : _invalidForegroundColor;
         }
 
         private void olvFiles_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             OpenFile();
-        }
-
-        private void SetUpAspectToStringConverters()
-        {
-            // Specify the file size format
-            colFilesize.AspectToStringConverter = delegate(object value)
-            {
-                var size = (long)value;
-                var limits = new[] { 1024 * 1024 * 1024, 1024 * 1024, 1024 };
-                var units = new[] { "GB", "MB", "KB" };
-
-                for (var i = 0; i < limits.Length; i++)
-                {
-                    if (size >= limits[i])
-                    {
-                        return String.Format("{0:#,##0.##} {1}", ((double)size / limits[i]), units[i]);
-                    }
-                }
-
-                return String.Format("{0} bytes", size);
-            };
         }
 
         private void olvFiles_ItemDrag(object sender, ItemDragEventArgs e)
@@ -250,16 +246,25 @@ namespace XmlFileExplorer
 
             if (item == null) return;
 
-            var fileInfo = item.RowObject as FileInfo;
+            var fileInfo = item.RowObject as XfeFileInfo;
 
             if (fileInfo != null)
             {
-                DoDragDrop(fileInfo.FullName, DragDropEffects.Copy);
+                DoDragDrop(fileInfo.FileInfo.FullName, DragDropEffects.Copy);
             }
         }
 
-        #endregion
+        private void olvFiles_SelectionChanged(object sender, EventArgs e)
+        {
+            var files = olvFiles.SelectedObjects.Cast<XfeFileInfo>();
+            var errors = files.SelectMany(v => v.ValidationErrors).ToList();
 
+            olvValidationErrors.Items.Clear();
+            olvValidationErrors.AddObjects(errors);
+        }
+
+        #endregion
+        
         #region Form events
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -295,9 +300,9 @@ namespace XmlFileExplorer
 
         private void OpenFile()
         {
-            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<FileInfo>())
+            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<XfeFileInfo>())
             {
-                OpenFile(selectedObject.FullName);
+                OpenFile(selectedObject.FileInfo.FullName);
             }
         }
 
@@ -363,9 +368,9 @@ namespace XmlFileExplorer
 
         private void ctxProperties_Click(object sender, EventArgs e)
         {
-            var file = olvFiles.SelectedObject as FileInfo;
+            var file = olvFiles.SelectedObject as XfeFileInfo;
             if (file == null) return;
-            ShowFileProperties(file.FullName);
+            ShowFileProperties(file.FileInfo.FullName);
         }
 
         private void ctxRename_Click(object sender, EventArgs e)
@@ -375,14 +380,14 @@ namespace XmlFileExplorer
 
         private void ctxDelete_Click(object sender, EventArgs e)
         {
-            var files = olvFiles.SelectedObjects.Cast<FileInfo>().ToList();
+            var files = olvFiles.SelectedObjects.Cast<XfeFileInfo>().ToList();
             var message = "Are you sure you wish to delete these files?";
 
             if (!files.Any()) return;
             
             if (files.Count() == 1)
             {
-                message = String.Format("Are you sure you wish to delete '{0}'", files.First().Name);
+                message = String.Format("Are you sure you wish to delete '{0}'", files.First().FileInfo.Name);
             }
 
             if (MessageBox.Show(message, @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
@@ -390,7 +395,7 @@ namespace XmlFileExplorer
 
             foreach (var fileInfo in files)
             {
-                fileInfo.Delete();
+                fileInfo.FileInfo.Delete();
             }
 
             RefreshFolder();
@@ -408,10 +413,11 @@ namespace XmlFileExplorer
         {
             var paths = new StringCollection();
 
-            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<FileInfo>())
+            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<XfeFileInfo>())
             {
-                paths.Add(selectedObject.FullName);
+                paths.Add(selectedObject.FileInfo.FullName);
             }
+
             return paths;
         }
 
