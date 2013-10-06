@@ -60,6 +60,9 @@ namespace XmlFileExplorer
             _validForegroundColor = Settings.Default.ValidXmlForegroundColor;
             _invalidBackgroundColor = Settings.Default.InvalidXmlBackgroundColor;
             _invalidForegroundColor = Settings.Default.InvalidXmlForegroundColor;
+
+            var errorsPanelPercentage = Settings.Default.ErrorsPanelPercentage;
+            splitContainer1.SplitterDistance = (splitContainer1.Height / 100) * errorsPanelPercentage;
         }
 
         private void PopulateTreeView()
@@ -229,7 +232,6 @@ namespace XmlFileExplorer
                 file.ValidationErrors.AddRange(validator.ValidateFile(file.FileInfo.FullName));
             }
 
-
             var passedAll = !file.ValidationErrors.Any();
 
             e.Item.BackColor = passedAll ? _validBackgroundColor : _invalidBackgroundColor;
@@ -274,6 +276,7 @@ namespace XmlFileExplorer
 
             var selectedDir = (DirectoryInfo)tvNavigation.SelectedNode.Tag;
             Settings.Default.LastViewedDirectory = selectedDir.FullName;
+            Settings.Default.ErrorsPanelPercentage = Convert.ToInt32(((double)splitContainer1.SplitterDistance / splitContainer1.Height) * 100);
             Settings.Default.Save();
         }
 

@@ -20,5 +20,8 @@
     <Setting Name="InvalidXmlBackgroundColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">LightPink</Value>
     </Setting>
+    <Setting Name="ErrorsPanelPercentage" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
