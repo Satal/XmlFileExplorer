@@ -361,13 +361,35 @@ namespace XmlFileExplorer
         
         private void olvFiles_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button != MouseButtons.Right || olvFiles.FocusedItem == null) return;
+
+            if (olvFiles.FocusedItem.Bounds.Contains(e.Location))
             {
-                if (olvFiles.FocusedItem.Bounds.Contains(e.Location))
+                var ctx = new ContextMenuStrip();
+                ctx.Items.Add("Open", null, ctxOpen_Click);
+                ctx.Items.Add(new ToolStripSeparator());
+                ctx.Items.Add("Copy", null, ctxCopy_Click);
+                ctx.Items.Add("Cut", null, ctxCut_Click);
+                
+                if (PasteFilesAvailable())
                 {
-                    ctxRightClick.Show(Cursor.Position);
+                    var pasteOption = ctx.Items.Add("Paste");
+                    pasteOption.Click += pasteOption_Click;
                 }
+
+                ctx.Items.Add(new ToolStripSeparator());
+                ctx.Items.Add("Delete", null, ctxDelete_Click);
+                ctx.Items.Add("Rename", null, ctxRename_Click);
+                ctx.Items.Add(new ToolStripSeparator());
+                ctx.Items.Add("Properties", null, ctxProperties_Click);
+
+                ctx.Show(Cursor.Position);
             }
+        }
+
+        void pasteOption_Click(object sender, EventArgs e)
+        {
+            Paste();
         }
 
         private void ctxProperties_Click(object sender, EventArgs e)
@@ -384,25 +406,7 @@ namespace XmlFileExplorer
 
         private void ctxDelete_Click(object sender, EventArgs e)
         {
-            var files = olvFiles.SelectedObjects.Cast<XfeFileInfo>().ToList();
-            var message = "Are you sure you wish to delete these files?";
-
-            if (!files.Any()) return;
-            
-            if (files.Count() == 1)
-            {
-                message = String.Format("Are you sure you wish to delete '{0}'", files.First().FileInfo.Name);
-            }
-
-            if (MessageBox.Show(message, @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                MessageBoxDefaultButton.Button1) != DialogResult.Yes) return;
-
-            foreach (var fileInfo in files)
-            {
-                fileInfo.FileInfo.Delete();
-            }
-
-            RefreshFolder();
+            DeleteSelectedFiles();
         }
 
         private void ctxCopy_Click(object sender, EventArgs e)
@@ -632,6 +636,115 @@ namespace XmlFileExplorer
                                     MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void olvFiles_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.C:
+                        break;
+                    case Keys.V:
+                        Paste();
+                        break;
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    DeleteSelectedFiles();
+                }
+            }
+        }
+
+        private void Paste()
+        {
+            var d = Clipboard.GetDataObject();
+            if (d == null || !d.GetDataPresent(DataFormats.FileDrop)) return;
+
+            var files = d.GetData(DataFormats.FileDrop) as string[];
+
+            if (files == null) return;
+            foreach (var file in files.Select(f => new FileInfo(f)))
+            {
+                // Check that the source file still exists
+                if (!file.Exists) continue;
+
+                var destFile = new FileInfo(Path.Combine(CurrentDirectory.FullName, file.Name));
+
+                if (destFile.Exists)
+                {
+                    if (file.Directory == null) return;
+
+                    if (file.Directory.FullName == CurrentDirectory.FullName)
+                    {
+                        var counter = 1;
+                        var ext = Path.GetExtension(file.Name);
+
+                        do
+                        {
+                            destFile = new FileInfo(
+                                Path.Combine(
+                                    CurrentDirectory.FullName,
+                                    String.Format("{0} - copy {1}.{2}",
+                                        Path.GetFileNameWithoutExtension(file.Name),
+                                        counter,
+                                        ext)
+                                ));
+
+                            counter++;
+                        } while (destFile.Exists);
+
+                        file.CopyTo(destFile.FullName);
+                    }
+                    else
+                    {
+                        if (MessageBox.Show(@"The file already exists in this directory, would you like to overwrite?",
+                                            @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            file.CopyTo(destFile.FullName, true);
+                        }
+                    }
+                }
+                else
+                {
+                    file.CopyTo(destFile.FullName);
+                }
+            }
+
+            RefreshFolder();
+        }
+
+        private static bool PasteFilesAvailable()
+        {
+            var d = Clipboard.GetDataObject();
+            return d != null && d.GetDataPresent(DataFormats.FileDrop);
+        }
+
+        private void DeleteSelectedFiles()
+        {
+            var files = olvFiles.SelectedObjects.Cast<XfeFileInfo>().ToList();
+            var message = "Are you sure you wish to delete these files?";
+
+            if (!files.Any()) return;
+
+            if (files.Count() == 1)
+            {
+                message = String.Format("Are you sure you wish to delete '{0}'", files.First().FileInfo.Name);
+            }
+
+            if (MessageBox.Show(message, @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                MessageBoxDefaultButton.Button1) != DialogResult.Yes) return;
+
+            foreach (var fileInfo in files)
+            {
+                fileInfo.FileInfo.Delete();
+            }
+
+            RefreshFolder();
         }
     }
 }

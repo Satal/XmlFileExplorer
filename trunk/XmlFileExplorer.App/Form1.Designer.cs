@@ -38,16 +38,6 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuItmAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.imgLstIcons = new System.Windows.Forms.ImageList(this.components);
-            this.ctxRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ctxOpen = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.ctxCut = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.ctxDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxRename = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.ctxProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.pctGo = new System.Windows.Forms.PictureBox();
@@ -66,7 +56,6 @@
             this.colSeverity = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.colError = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
-            this.ctxRightClick.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctGo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctUpALevel)).BeginInit();
@@ -149,78 +138,6 @@
             this.imgLstIcons.Images.SetKeyName(3, "Information");
             this.imgLstIcons.Images.SetKeyName(4, "Warning");
             // 
-            // ctxRightClick
-            // 
-            this.ctxRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxOpen,
-            this.toolStripSeparator1,
-            this.ctxCut,
-            this.ctxCopy,
-            this.toolStripSeparator3,
-            this.ctxDelete,
-            this.ctxRename,
-            this.toolStripSeparator2,
-            this.ctxProperties});
-            this.ctxRightClick.Name = "ctxRightClick";
-            this.ctxRightClick.Size = new System.Drawing.Size(128, 154);
-            // 
-            // ctxOpen
-            // 
-            this.ctxOpen.Name = "ctxOpen";
-            this.ctxOpen.Size = new System.Drawing.Size(127, 22);
-            this.ctxOpen.Text = "Open";
-            this.ctxOpen.Click += new System.EventHandler(this.ctxOpen_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(124, 6);
-            // 
-            // ctxCut
-            // 
-            this.ctxCut.Name = "ctxCut";
-            this.ctxCut.Size = new System.Drawing.Size(127, 22);
-            this.ctxCut.Text = "Cut";
-            this.ctxCut.Click += new System.EventHandler(this.ctxCut_Click);
-            // 
-            // ctxCopy
-            // 
-            this.ctxCopy.Name = "ctxCopy";
-            this.ctxCopy.Size = new System.Drawing.Size(127, 22);
-            this.ctxCopy.Text = "Copy";
-            this.ctxCopy.Click += new System.EventHandler(this.ctxCopy_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(124, 6);
-            // 
-            // ctxDelete
-            // 
-            this.ctxDelete.Name = "ctxDelete";
-            this.ctxDelete.Size = new System.Drawing.Size(127, 22);
-            this.ctxDelete.Text = "Delete";
-            this.ctxDelete.Click += new System.EventHandler(this.ctxDelete_Click);
-            // 
-            // ctxRename
-            // 
-            this.ctxRename.Name = "ctxRename";
-            this.ctxRename.Size = new System.Drawing.Size(127, 22);
-            this.ctxRename.Text = "Rename";
-            this.ctxRename.Click += new System.EventHandler(this.ctxRename_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(124, 6);
-            // 
-            // ctxProperties
-            // 
-            this.ctxProperties.Name = "ctxProperties";
-            this.ctxProperties.Size = new System.Drawing.Size(127, 22);
-            this.ctxProperties.Text = "Properties";
-            this.ctxProperties.Click += new System.EventHandler(this.ctxProperties_Click);
-            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.pctGo);
@@ -249,7 +166,7 @@
             // pctUpALevel
             // 
             this.pctUpALevel.Image = global::XmlFileExplorer.Properties.Resources.UpALevel;
-            this.pctUpALevel.Location = new System.Drawing.Point(98, 0);
+            this.pctUpALevel.Location = new System.Drawing.Point(82, 0);
             this.pctUpALevel.Name = "pctUpALevel";
             this.pctUpALevel.Size = new System.Drawing.Size(24, 24);
             this.pctUpALevel.TabIndex = 3;
@@ -263,9 +180,9 @@
             this.txtDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDirectory.Location = new System.Drawing.Point(124, 2);
+            this.txtDirectory.Location = new System.Drawing.Point(112, 2);
             this.txtDirectory.Name = "txtDirectory";
-            this.txtDirectory.Size = new System.Drawing.Size(1218, 20);
+            this.txtDirectory.Size = new System.Drawing.Size(1230, 20);
             this.txtDirectory.TabIndex = 2;
             this.txtDirectory.Enter += new System.EventHandler(this.txtDirectory_Enter);
             this.txtDirectory.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDirectory_KeyDown);
@@ -344,6 +261,8 @@
             this.colFilesize,
             this.colCreated,
             this.colModified});
+            this.olvFiles.CopySelectionOnControlC = false;
+            this.olvFiles.CopySelectionOnControlCUsesDragSource = false;
             this.olvFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvFiles.FullRowSelect = true;
             this.olvFiles.HasCollapsibleGroups = false;
@@ -359,6 +278,7 @@
             this.olvFiles.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olvFiles_FormatRow);
             this.olvFiles.SelectionChanged += new System.EventHandler(this.olvFiles_SelectionChanged);
             this.olvFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.olvFiles_ItemDrag);
+            this.olvFiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.olvFiles_KeyDown);
             this.olvFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseDoubleClick);
             this.olvFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseUp);
             // 
@@ -439,7 +359,6 @@
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.ctxRightClick.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctGo)).EndInit();
@@ -470,16 +389,6 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuItmAbout;
         private System.Windows.Forms.ImageList imgLstIcons;
-        private System.Windows.Forms.ContextMenuStrip ctxRightClick;
-        private System.Windows.Forms.ToolStripMenuItem ctxOpen;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem ctxCut;
-        private System.Windows.Forms.ToolStripMenuItem ctxCopy;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem ctxDelete;
-        private System.Windows.Forms.ToolStripMenuItem ctxRename;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem ctxProperties;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.PictureBox pctGo;
