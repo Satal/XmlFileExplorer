@@ -361,11 +361,11 @@ namespace XmlFileExplorer
         
         private void olvFiles_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Right || olvFiles.FocusedItem == null) return;
+            if (e.Button != MouseButtons.Right) return;
+            var ctx = new ContextMenuStrip();
 
-            if (olvFiles.FocusedItem.Bounds.Contains(e.Location))
+            if (olvFiles.FocusedItem != null && olvFiles.FocusedItem.Bounds.Contains(e.Location))
             {
-                var ctx = new ContextMenuStrip();
                 ctx.Items.Add("Open", null, ctxOpen_Click);
                 ctx.Items.Add(new ToolStripSeparator());
                 ctx.Items.Add("Copy", null, ctxCopy_Click);
@@ -380,11 +380,28 @@ namespace XmlFileExplorer
                 ctx.Items.Add(new ToolStripSeparator());
                 ctx.Items.Add("Delete", null, ctxDelete_Click);
                 ctx.Items.Add("Rename", null, ctxRename_Click);
-                ctx.Items.Add(new ToolStripSeparator());
-                ctx.Items.Add("Properties", null, ctxProperties_Click);
-
-                ctx.Show(Cursor.Position);
             }
+            else
+            {
+                // The user has right clicked on an empty area
+                if (PasteFilesAvailable())
+                {
+                    var pasteOption = ctx.Items.Add("Paste");
+                    pasteOption.Click += pasteOption_Click;
+                    ctx.Items.Add(new ToolStripSeparator());
+                }
+
+                ctx.Items.Add("Refresh", null, ctxRefresh_Click);
+            }
+
+            ctx.Items.Add(new ToolStripSeparator());
+            ctx.Items.Add("Properties", null, ctxProperties_Click);
+            ctx.Show(Cursor.Position);
+        }
+
+        private void ctxRefresh_Click(object sender, EventArgs eventArgs)
+        {
+            RefreshFolder();
         }
 
         void pasteOption_Click(object sender, EventArgs e)
@@ -394,9 +411,10 @@ namespace XmlFileExplorer
 
         private void ctxProperties_Click(object sender, EventArgs e)
         {
+
             var file = olvFiles.SelectedObject as XfeFileInfo;
-            if (file == null) return;
-            ShowFileProperties(file.FileInfo.FullName);
+            var propLocation = (file == null) ? CurrentDirectory.FullName : file.FileInfo.FullName;
+            ShowProperties(propLocation);
         }
 
         private void ctxRename_Click(object sender, EventArgs e)
@@ -481,7 +499,7 @@ namespace XmlFileExplorer
 
         private const int SwShow = 5;
         private const uint SeeMaskInvokeidlist = 12;
-        public static bool ShowFileProperties(string filename)
+        public static bool ShowProperties(string filename)
         {
             var info = new ShellExecuteInfo();
             info.cbSize = Marshal.SizeOf(info);
