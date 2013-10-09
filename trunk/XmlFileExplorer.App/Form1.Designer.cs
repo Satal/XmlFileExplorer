@@ -256,6 +256,7 @@
             this.olvFiles.AllColumns.Add(this.colFilesize);
             this.olvFiles.AllColumns.Add(this.colCreated);
             this.olvFiles.AllColumns.Add(this.colModified);
+            this.olvFiles.AllowDrop = true;
             this.olvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colFilename,
             this.colFilesize,
@@ -268,6 +269,7 @@
             this.olvFiles.HasCollapsibleGroups = false;
             this.olvFiles.HideSelection = false;
             this.olvFiles.IsSimpleDragSource = true;
+            this.olvFiles.IsSimpleDropSink = true;
             this.olvFiles.Location = new System.Drawing.Point(0, 0);
             this.olvFiles.Name = "olvFiles";
             this.olvFiles.ShowGroups = false;
@@ -275,9 +277,11 @@
             this.olvFiles.TabIndex = 1;
             this.olvFiles.UseCompatibleStateImageBehavior = false;
             this.olvFiles.View = System.Windows.Forms.View.Details;
+            this.olvFiles.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.olvFiles_CanDrop);
             this.olvFiles.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olvFiles_FormatRow);
             this.olvFiles.SelectionChanged += new System.EventHandler(this.olvFiles_SelectionChanged);
             this.olvFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.olvFiles_ItemDrag);
+            this.olvFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.olvFiles_DragDrop);
             this.olvFiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.olvFiles_KeyDown);
             this.olvFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseDoubleClick);
             this.olvFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseUp);

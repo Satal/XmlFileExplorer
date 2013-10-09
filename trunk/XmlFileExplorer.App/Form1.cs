@@ -266,6 +266,43 @@ namespace XmlFileExplorer
             olvValidationErrors.AddObjects(errors);
         }
 
+        private void olvFiles_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.C:
+                        break;
+                    case Keys.V:
+                        Paste();
+                        break;
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    DeleteSelectedFiles();
+                }
+            }
+        }
+
+        private void olvFiles_DragDrop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+
+            var fileLocations = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if (fileLocations == null || !fileLocations.Any()) return;
+            
+            PasteFiles(fileLocations, true);
+        }
+
+        private void olvFiles_CanDrop(object sender, OlvDropEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+
         #endregion
         
         #region Form events
@@ -656,28 +693,6 @@ namespace XmlFileExplorer
             }
         }
 
-        private void olvFiles_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Modifiers == Keys.Control)
-            {
-                switch (e.KeyCode)
-                {
-                    case Keys.C:
-                        break;
-                    case Keys.V:
-                        Paste();
-                        break;
-                }
-            }
-            else
-            {
-                if (e.KeyCode == Keys.Delete)
-                {
-                    DeleteSelectedFiles();
-                }
-            }
-        }
-
         private void Paste()
         {
             var d = Clipboard.GetDataObject();
@@ -685,6 +700,11 @@ namespace XmlFileExplorer
 
             var files = d.GetData(DataFormats.FileDrop) as string[];
 
+            PasteFiles(files, false);
+        }
+
+        private void PasteFiles(IEnumerable<string> files, bool moveIfSameDrive)
+        {
             if (files == null) return;
             foreach (var file in files.Select(f => new FileInfo(f)))
             {
@@ -693,11 +713,10 @@ namespace XmlFileExplorer
 
                 var destFile = new FileInfo(Path.Combine(CurrentDirectory.FullName, file.Name));
 
+                // If a file with that name already exists work out what to do.
                 if (destFile.Exists)
                 {
-                    if (file.Directory == null) return;
-
-                    if (file.Directory.FullName == CurrentDirectory.FullName)
+                    if (file.Directory == null || file.Directory.FullName == CurrentDirectory.FullName)
                     {
                         var counter = 1;
                         var ext = Path.GetExtension(file.Name);
@@ -708,28 +727,34 @@ namespace XmlFileExplorer
                                 Path.Combine(
                                     CurrentDirectory.FullName,
                                     String.Format("{0} - copy {1}.{2}",
-                                        Path.GetFileNameWithoutExtension(file.Name),
-                                        counter,
-                                        ext)
-                                ));
+                                                  Path.GetFileNameWithoutExtension(file.Name),
+                                                  counter,
+                                                  ext)
+                                    ));
 
                             counter++;
                         } while (destFile.Exists);
-
-                        file.CopyTo(destFile.FullName);
                     }
                     else
                     {
                         if (MessageBox.Show(@"The file already exists in this directory, would you like to overwrite?",
-                                            @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                                            @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) !=
+                            DialogResult.Yes)
                         {
-                            file.CopyTo(destFile.FullName, true);
+                            continue;
                         }
                     }
                 }
+
+                if (moveIfSameDrive && file.Directory != null && destFile.Directory != null && file.Directory.Root.Name == destFile.Directory.Root.Name)
+                {
+                    if (destFile.Exists) destFile.Delete();
+
+                    file.MoveTo(destFile.FullName);
+                }
                 else
                 {
-                    file.CopyTo(destFile.FullName);
+                    file.CopyTo(destFile.FullName, true);
                 }
             }
 
