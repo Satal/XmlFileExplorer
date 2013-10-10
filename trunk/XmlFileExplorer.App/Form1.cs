@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -281,9 +282,17 @@ namespace XmlFileExplorer
             }
             else
             {
-                if (e.KeyCode == Keys.Delete)
+                switch (e.KeyCode)
                 {
-                    DeleteSelectedFiles();
+                    case Keys.Delete:
+                        DeleteSelectedFiles();
+                        break;
+                    case Keys.F5:
+                        RefreshFolder();
+                        break;
+                    case Keys.F6:
+                        txtDirectory.Focus();
+                        break;
                 }
             }
         }
@@ -714,47 +723,33 @@ namespace XmlFileExplorer
                 var destFile = new FileInfo(Path.Combine(CurrentDirectory.FullName, file.Name));
 
                 // If a file with that name already exists work out what to do.
-                if (destFile.Exists)
+                if (destFile.Exists && (file.Directory == null || file.Directory.FullName == CurrentDirectory.FullName))
                 {
-                    if (file.Directory == null || file.Directory.FullName == CurrentDirectory.FullName)
-                    {
-                        var counter = 1;
-                        var ext = Path.GetExtension(file.Name);
+                    var counter = 1;
+                    var ext = Path.GetExtension(file.Name);
 
-                        do
-                        {
-                            destFile = new FileInfo(
-                                Path.Combine(
-                                    CurrentDirectory.FullName,
-                                    String.Format("{0} - copy {1}.{2}",
-                                                  Path.GetFileNameWithoutExtension(file.Name),
-                                                  counter,
-                                                  ext)
-                                    ));
-
-                            counter++;
-                        } while (destFile.Exists);
-                    }
-                    else
+                    do
                     {
-                        if (MessageBox.Show(@"The file already exists in this directory, would you like to overwrite?",
-                                            @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) !=
-                            DialogResult.Yes)
-                        {
-                            continue;
-                        }
-                    }
+                        destFile = new FileInfo(
+                            Path.Combine(
+                                CurrentDirectory.FullName,
+                                String.Format("{0} - copy {1}.{2}",
+                                              Path.GetFileNameWithoutExtension(file.Name),
+                                              counter,
+                                              ext)
+                                ));
+
+                        counter++;
+                    } while (destFile.Exists);
                 }
 
                 if (moveIfSameDrive && file.Directory != null && destFile.Directory != null && file.Directory.Root.Name == destFile.Directory.Root.Name)
                 {
-                    if (destFile.Exists) destFile.Delete();
-
-                    file.MoveTo(destFile.FullName);
+                    FileSystem.MoveFile(file.FullName, destFile.FullName, UIOption.AllDialogs, UICancelOption.DoNothing);
                 }
                 else
                 {
-                    file.CopyTo(destFile.FullName, true);
+                    FileSystem.CopyFile(file.FullName, destFile.FullName, UIOption.AllDialogs, UICancelOption.DoNothing);
                 }
             }
 
