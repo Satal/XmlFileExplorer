@@ -271,10 +271,10 @@
             this.olvFiles.HideSelection = false;
             this.olvFiles.IsSimpleDragSource = true;
             this.olvFiles.IsSimpleDropSink = true;
+            this.olvFiles.LabelEdit = true;
             this.olvFiles.Location = new System.Drawing.Point(0, 0);
             this.olvFiles.Name = "olvFiles";
             this.olvFiles.ShowGroups = false;
-            this.olvFiles.LabelEdit = true;
             this.olvFiles.Size = new System.Drawing.Size(1118, 300);
             this.olvFiles.TabIndex = 1;
             this.olvFiles.UseCompatibleStateImageBehavior = false;
@@ -288,8 +288,6 @@
             this.olvFiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.olvFiles_KeyDown);
             this.olvFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseDoubleClick);
             this.olvFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.olvFiles_MouseUp);
-            this.olvFiles.AfterLabelEdit += olvFiles_AfterLabelEdit;
-
             // 
             // colFilename
             // 

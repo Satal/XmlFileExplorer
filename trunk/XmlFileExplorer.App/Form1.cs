@@ -63,7 +63,7 @@ namespace XmlFileExplorer
             _invalidForegroundColor = Settings.Default.InvalidXmlForegroundColor;
 
             var errorsPanelPercentage = Settings.Default.ErrorsPanelPercentage;
-            splitContainer1.SplitterDistance = (splitContainer1.Height / 100) * errorsPanelPercentage;
+            splitContainer1.SplitterDistance = (splitContainer1.Height / 100) * errorsPanelPercentage - panel2.Height;
         }
 
         private void PopulateTreeView()
@@ -423,6 +423,8 @@ namespace XmlFileExplorer
 
         private void OpenDirectory(string path)
         {
+            // Make sure that the path is not null or empty
+            if (String.IsNullOrEmpty(path)) return;
             var dir = new DirectoryInfo(path);
             var dirList = new List<DirectoryInfo>();
             if (!dir.Exists) return;
