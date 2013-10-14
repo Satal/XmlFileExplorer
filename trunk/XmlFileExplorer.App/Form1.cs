@@ -269,14 +269,19 @@ namespace XmlFileExplorer
 
         private void olvFiles_KeyDown(object sender, KeyEventArgs e)
         {
+            var pressHandled = false;
+
             if (e.Modifiers == Keys.Control)
             {
                 switch (e.KeyCode)
                 {
                     case Keys.C:
+                        PutSelectedFilesInClipboard();
+                        pressHandled = true;
                         break;
                     case Keys.V:
                         Paste();
+                        pressHandled = true;
                         break;
                 }
             }
@@ -285,15 +290,25 @@ namespace XmlFileExplorer
                 switch (e.KeyCode)
                 {
                     case Keys.Delete:
-                        DeleteSelectedFiles();
+                        var deletePerm = e.Modifiers == Keys.Shift;
+                        DeleteSelectedFiles(!deletePerm);
+                        pressHandled = true;
                         break;
                     case Keys.F5:
                         RefreshFolder();
+                        pressHandled = true;
                         break;
                     case Keys.F6:
                         txtDirectory.Focus();
+                        pressHandled = true;
                         break;
                 }
+            }
+
+            if (pressHandled)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
 
@@ -526,22 +541,7 @@ namespace XmlFileExplorer
 
         private void ctxCopy_Click(object sender, EventArgs e)
         {
-            var paths = GetSelectedFilesStringCollection();
-
-            Clipboard.Clear();
-            Clipboard.SetFileDropList(paths);
-        }
-
-        private StringCollection GetSelectedFilesStringCollection()
-        {
-            var paths = new StringCollection();
-
-            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<XfeFileInfo>())
-            {
-                paths.Add(selectedObject.FileInfo.FullName);
-            }
-
-            return paths;
+            PutSelectedFilesInClipboard();
         }
 
         private void ctxCut_Click(object sender, EventArgs e)
@@ -813,27 +813,49 @@ namespace XmlFileExplorer
             return d != null && d.GetDataPresent(DataFormats.FileDrop);
         }
 
-        private void DeleteSelectedFiles()
+        private StringCollection GetSelectedFilesStringCollection()
         {
-            var files = olvFiles.SelectedObjects.Cast<XfeFileInfo>().ToList();
-            var message = "Are you sure you wish to delete these files?";
+            var paths = new StringCollection();
 
-            if (!files.Any()) return;
-
-            if (files.Count() == 1)
+            foreach (var selectedObject in olvFiles.SelectedObjects.Cast<XfeFileInfo>())
             {
-                message = String.Format("Are you sure you wish to delete '{0}'", files.First().FileInfo.Name);
+                paths.Add(selectedObject.FileInfo.FullName);
             }
 
-            if (MessageBox.Show(message, @"Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                MessageBoxDefaultButton.Button1) != DialogResult.Yes) return;
+            return paths;
+        }
+
+        private void DeleteSelectedFiles(bool sendToRecycleBin = true)
+        {
+            var files = GetSelectedFilesStringCollection();
+            var fileCount = files.Count;
+            var recycleOption = sendToRecycleBin ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
+            var uiOption = fileCount == 1 ? UIOption.AllDialogs : UIOption.OnlyErrorDialogs;
+
+            if (!sendToRecycleBin && fileCount > 1)
+            {
+                if (MessageBox.Show(String.Format(@"Are you sure that you want to permanently delete these {0} items?", fileCount),
+                                    @"Delete Multiple Items", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) !=
+                    DialogResult.Yes)
+                {
+                    return;
+                }
+            }
 
             foreach (var fileInfo in files)
             {
-                fileInfo.FileInfo.Delete();
+                FileSystem.DeleteFile(fileInfo, uiOption, recycleOption);
             }
 
             RefreshFolder();
+        }
+        
+        private void PutSelectedFilesInClipboard()
+        {
+            var paths = GetSelectedFilesStringCollection();
+
+            Clipboard.Clear();
+            Clipboard.SetFileDropList(paths);
         }
     }
 }
