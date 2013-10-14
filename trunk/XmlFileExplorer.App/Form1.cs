@@ -312,6 +312,29 @@ namespace XmlFileExplorer
             e.Effect = DragDropEffects.Copy;
         }
 
+        private void olvFiles_CellEditFinishing(object sender, CellEditEventArgs e)
+        {
+            // Check the file name has changed
+            if ((string)e.NewValue == (string)e.Value) return;
+
+            // We have finished editing the cell
+            var file = e.RowObject as XfeFileInfo;
+
+            if (file == null || file.FileInfo.Directory == null) return;
+
+            var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, (string)e.NewValue));
+
+            if (newFile.Exists)
+            {
+                MessageBox.Show(@"A file with that name already exists", @"Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                e.Cancel = true;
+                return;
+            }
+
+            file.FileInfo.MoveTo(newFile.FullName);
+        }
+
         #endregion
         
         #region Form events
@@ -425,7 +448,11 @@ namespace XmlFileExplorer
 
                 ctx.Items.Add(new ToolStripSeparator());
                 ctx.Items.Add("Delete", null, ctxDelete_Click);
-                ctx.Items.Add("Rename", null, ctxRename_Click);
+
+                if (olvFiles.SelectedObjects.Count == 1)
+                {
+                    ctx.Items.Add("Rename", null, ctxRename_Click);
+                }
             }
             else
             {
@@ -465,7 +492,9 @@ namespace XmlFileExplorer
 
         private void ctxRename_Click(object sender, EventArgs e)
         {
-
+            if (olvFiles.SelectedObjects.Count == 0) return;
+            
+            olvFiles.EditModel(olvFiles.SelectedObject);
         }
 
         private void ctxDelete_Click(object sender, EventArgs e)
@@ -783,26 +812,6 @@ namespace XmlFileExplorer
             }
 
             RefreshFolder();
-        }
-
-        private void olvFiles_CellEditFinishing(object sender, CellEditEventArgs e)
-        {
-            // We have finished editing the cell
-            var file = e.RowObject as XfeFileInfo;
-
-            if (file == null || file.FileInfo.Directory == null) return;
-
-            var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, (string)e.NewValue));
-
-            if (newFile.Exists)
-            {
-                MessageBox.Show(@"A file with that name already exists", @"Error", MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
-                e.Cancel = true;
-                return;
-            }
-
-            file.FileInfo.MoveTo(newFile.FullName);
         }
     }
 }
