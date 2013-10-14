@@ -784,5 +784,25 @@ namespace XmlFileExplorer
 
             RefreshFolder();
         }
+
+        private void olvFiles_CellEditFinishing(object sender, CellEditEventArgs e)
+        {
+            // We have finished editing the cell
+            var file = e.RowObject as XfeFileInfo;
+
+            if (file == null || file.FileInfo.Directory == null) return;
+
+            var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, (string)e.NewValue));
+
+            if (newFile.Exists)
+            {
+                MessageBox.Show(@"A file with that name already exists", @"Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                e.Cancel = true;
+                return;
+            }
+
+            file.FileInfo.MoveTo(newFile.FullName);
+        }
     }
 }

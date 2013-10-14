@@ -257,6 +257,7 @@
             this.olvFiles.AllColumns.Add(this.colCreated);
             this.olvFiles.AllColumns.Add(this.colModified);
             this.olvFiles.AllowDrop = true;
+            this.olvFiles.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
             this.olvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colFilename,
             this.colFilesize,
@@ -278,6 +279,7 @@
             this.olvFiles.UseCompatibleStateImageBehavior = false;
             this.olvFiles.View = System.Windows.Forms.View.Details;
             this.olvFiles.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.olvFiles_CanDrop);
+            this.olvFiles.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.olvFiles_CellEditFinishing);
             this.olvFiles.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olvFiles_FormatRow);
             this.olvFiles.SelectionChanged += new System.EventHandler(this.olvFiles_SelectionChanged);
             this.olvFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.olvFiles_ItemDrag);
@@ -296,6 +298,7 @@
             // 
             this.colFilesize.AspectName = "FileInfo.Length";
             this.colFilesize.CellPadding = null;
+            this.colFilesize.IsEditable = false;
             this.colFilesize.Text = "File size";
             // 
             // colCreated
@@ -303,6 +306,7 @@
             this.colCreated.AspectName = "FileInfo.CreationTime";
             this.colCreated.CellPadding = null;
             this.colCreated.DisplayIndex = 3;
+            this.colCreated.IsEditable = false;
             this.colCreated.Text = "Created";
             // 
             // colModified
@@ -310,6 +314,7 @@
             this.colModified.AspectName = "FileInfo.LastWriteTime";
             this.colModified.CellPadding = null;
             this.colModified.DisplayIndex = 2;
+            this.colModified.IsEditable = false;
             this.colModified.Text = "Modified";
             // 
             // olvValidationErrors
