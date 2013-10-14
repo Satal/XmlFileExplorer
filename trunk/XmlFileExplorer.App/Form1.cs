@@ -335,6 +335,28 @@ namespace XmlFileExplorer
             file.FileInfo.MoveTo(newFile.FullName);
         }
 
+        private void olvFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            var item = olvFiles.Items[e.Item] as OLVListItem;
+            if (item == null) return;
+            var file = item.RowObject as XfeFileInfo;
+
+            // Check that the file isn't null and that the file name has changed
+            if (file == null || file.FileInfo.Directory == null || e.Label == file.FileInfo.Name) return;
+
+            var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, e.Label));
+
+            if (newFile.Exists)
+            {
+                MessageBox.Show(@"A file with that name already exists", @"Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                e.CancelEdit = true;
+                return;
+            }
+
+            file.FileInfo.MoveTo(newFile.FullName);
+        }
+
         #endregion
         
         #region Form events
