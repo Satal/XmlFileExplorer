@@ -217,7 +217,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.olvValidationErrors);
             this.splitContainer1.Size = new System.Drawing.Size(1368, 553);
             this.splitContainer1.SplitterDistance = 300;
-            this.splitContainer1.TabIndex = 4;
+            this.splitContainer1.TabIndex = 0;
             // 
             // spltMain
             // 
@@ -234,7 +234,7 @@
             this.spltMain.Panel2.Controls.Add(this.olvFiles);
             this.spltMain.Size = new System.Drawing.Size(1368, 300);
             this.spltMain.SplitterDistance = 246;
-            this.spltMain.TabIndex = 5;
+            this.spltMain.TabIndex = 1;
             // 
             // tvNavigation
             // 
@@ -246,7 +246,7 @@
             this.tvNavigation.Name = "tvNavigation";
             this.tvNavigation.SelectedImageIndex = 0;
             this.tvNavigation.Size = new System.Drawing.Size(246, 300);
-            this.tvNavigation.TabIndex = 0;
+            this.tvNavigation.TabIndex = 1;
             this.tvNavigation.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvNavigation_BeforeExpand);
             this.tvNavigation.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvNavigation_AfterSelect);
             // 
@@ -276,7 +276,7 @@
             this.olvFiles.Name = "olvFiles";
             this.olvFiles.ShowGroups = false;
             this.olvFiles.Size = new System.Drawing.Size(1118, 300);
-            this.olvFiles.TabIndex = 1;
+            this.olvFiles.TabIndex = 0;
             this.olvFiles.UseCompatibleStateImageBehavior = false;
             this.olvFiles.View = System.Windows.Forms.View.Details;
             this.olvFiles.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.olvFiles_CanDrop);

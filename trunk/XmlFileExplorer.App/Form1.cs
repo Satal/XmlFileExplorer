@@ -28,6 +28,7 @@ namespace XmlFileExplorer
         private Color _validForegroundColor;
         private Color _invalidBackgroundColor;
         private Color _invalidForegroundColor;
+        private bool _showExtension;
         private DirectoryInfo CurrentDirectory { get; set; }
         private readonly Stack<DirectoryInfo> _history = new Stack<DirectoryInfo>();
 
@@ -37,6 +38,10 @@ namespace XmlFileExplorer
         public Form1()
         {
             InitializeComponent();
+
+            // This gets removed when the designer regenerates the code, so we have to put this here
+            olvFiles.AfterLabelEdit += olvFiles_AfterLabelEdit;
+
             SetUpOlvDelegates();
             PopulateTreeView();
             LoadAppearanceConfiguration();
@@ -62,8 +67,11 @@ namespace XmlFileExplorer
             _invalidBackgroundColor = Settings.Default.InvalidXmlBackgroundColor;
             _invalidForegroundColor = Settings.Default.InvalidXmlForegroundColor;
 
+            _showExtension = Settings.Default.ShowFileExtension;
+
             var errorsPanelPercentage = Settings.Default.ErrorsPanelPercentage;
             splitContainer1.SplitterDistance = ((splitContainer1.Height / 100) * errorsPanelPercentage) + panel2.Height;
+            WindowState = Settings.Default.IsMaximised ? FormWindowState.Maximized : FormWindowState.Normal;
         }
 
         private void PopulateTreeView()
@@ -120,6 +128,12 @@ namespace XmlFileExplorer
 
         private void SetUpOlvDelegates()
         {
+            colFilename.AspectToStringConverter = delegate(object value)
+                {
+                    var file = (string)value;
+                    return _showExtension ? file : Path.GetFileNameWithoutExtension(file);
+                };
+
             // Specify the file size format
             colFilesize.AspectToStringConverter = delegate(object value)
             {
@@ -382,6 +396,7 @@ namespace XmlFileExplorer
 
             var selectedDir = (DirectoryInfo)tvNavigation.SelectedNode.Tag;
             Settings.Default.LastViewedDirectory = selectedDir.FullName;
+            Settings.Default.IsMaximised = WindowState == FormWindowState.Maximized;
             Settings.Default.ErrorsPanelPercentage = Convert.ToInt32(((double)splitContainer1.SplitterDistance / (splitContainer1.Height - panel2.Height)) * 100);
             Settings.Default.Save();
         }

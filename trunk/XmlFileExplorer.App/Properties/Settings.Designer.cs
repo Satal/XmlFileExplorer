@@ -106,5 +106,29 @@ namespace XmlFileExplorer.Properties {
                 this["ErrorsPanelPercentage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsMaximised {
+            get {
+                return ((bool)(this["IsMaximised"]));
+            }
+            set {
+                this["IsMaximised"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowFileExtension {
+            get {
+                return ((bool)(this["ShowFileExtension"]));
+            }
+            set {
+                this["ShowFileExtension"] = value;
+            }
+        }
     }
 }
