@@ -10,7 +10,7 @@ using XmlFileExplorer.Properties;
 
 namespace XmlFileExplorer.Forms
 {
-    public delegate void FolderLocationChangedHandler(object sender, FolderLocationChangedEventArgs eventArgs);
+    public delegate void FolderLocationChangedHandler(object sender, FolderLocationChangedEventArgs e);
 
     public partial class FolderExplorer : DockContent
     {

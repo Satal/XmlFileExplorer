@@ -20,7 +20,7 @@ using XmlFileExplorer.Properties;
 
 namespace XmlFileExplorer.Forms
 {
-    public delegate void FileSelectionChangedHandler(object sender, FileSelectionChangedEventArgs eventArgs);
+    public delegate void FileSelectionChangedHandler(object sender, FileSelectionChangedEventArgs e);
 
     public partial class FilesForm : DockContent
     {
@@ -474,7 +474,7 @@ namespace XmlFileExplorer.Forms
         {
             var file = olvFiles.SelectedObject as XfeFileInfo;
             string propLocation = (file == null) ? CurrentDirectory.FullName : file.FileInfo.FullName;
-            ShowProperties(propLocation);
+            NativeMethods.ShowProperties(propLocation);
         }
 
         private void ctxRename_Click(object sender, EventArgs e)
@@ -514,47 +514,6 @@ namespace XmlFileExplorer.Forms
         {
             OpenFile();
         }
-
-        #region Properties Dialog box
-
-        private const int SwShow = 5;
-        private const uint SeeMaskInvokeidlist = 12;
-
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        private static extern bool ShellExecuteEx(ref ShellExecuteInfo lpExecInfo);
-
-        public static bool ShowProperties(string filename)
-        {
-            var info = new ShellExecuteInfo();
-            info.cbSize = Marshal.SizeOf(info);
-            info.lpVerb = "properties";
-            info.lpFile = filename;
-            info.nShow = SwShow;
-            info.fMask = SeeMaskInvokeidlist;
-            return ShellExecuteEx(ref info);
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct ShellExecuteInfo
-        {
-            public int cbSize;
-            public uint fMask;
-            public IntPtr hwnd;
-            [MarshalAs(UnmanagedType.LPTStr)] public string lpVerb;
-            [MarshalAs(UnmanagedType.LPTStr)] public string lpFile;
-            [MarshalAs(UnmanagedType.LPTStr)] public string lpParameters;
-            [MarshalAs(UnmanagedType.LPTStr)] public string lpDirectory;
-            public int nShow;
-            public IntPtr hInstApp;
-            public IntPtr lpIDList;
-            [MarshalAs(UnmanagedType.LPTStr)] public string lpClass;
-            public IntPtr hkeyClass;
-            public uint dwHotKey;
-            public IntPtr hIcon;
-            public IntPtr hProcess;
-        }
-
-        #endregion
 
         #endregion
     }
