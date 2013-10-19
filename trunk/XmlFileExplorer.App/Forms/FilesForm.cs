@@ -42,6 +42,8 @@ namespace XmlFileExplorer.Forms
             LoadValidators();
             SetUpOlvDelegates();
             LoadAppearanceConfiguration();
+
+            Load += (sender, args) => MdiParent.Resize += MdiParent_Resize;
         }
 
         [ImportMany(typeof (IValidator))]
@@ -86,7 +88,7 @@ namespace XmlFileExplorer.Forms
                     return String.Format("{0} bytes", size);
                 };
         }
-        
+
         private void LoadValidators()
         {
             var catalog = new AggregateCatalog();
@@ -375,6 +377,8 @@ namespace XmlFileExplorer.Forms
 
         public void OpenDirectory(DirectoryInfo directory)
         {
+            CurrentDirectory = directory;
+
             olvFiles.BeginUpdate();
 
             olvFiles.Items.Clear();
@@ -395,6 +399,13 @@ namespace XmlFileExplorer.Forms
             }
 
             olvFiles.EndUpdate();
+        }
+
+        private void MdiParent_Resize(object sender, EventArgs e)
+        {
+            if (CurrentDirectory == null) return;
+
+            RefreshFolder();
         }
 
         private static bool PasteFilesAvailable()
