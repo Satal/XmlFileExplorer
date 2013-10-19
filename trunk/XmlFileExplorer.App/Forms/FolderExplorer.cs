@@ -38,6 +38,7 @@ namespace XmlFileExplorer.Forms
             var dirList = new List<DirectoryInfo>();
             if (!dir.Exists) return;
 
+            CurrentDirectory = dir;
             DirectoryInfo curDir = dir;
             dirList.Add(curDir);
             while (curDir != null)
