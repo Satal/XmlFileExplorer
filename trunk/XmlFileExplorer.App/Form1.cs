@@ -373,7 +373,9 @@ namespace XmlFileExplorer
             // Check that the file isn't null and that the file name has changed
             if (file == null || file.FileInfo.Directory == null || e.Label == file.FileInfo.Name) return;
 
-            var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, e.Label));
+            var newFileName = e.Label;
+
+            var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, newFileName));
 
             if (newFile.Exists)
             {
