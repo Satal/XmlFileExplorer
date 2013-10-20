@@ -241,8 +241,11 @@ namespace XmlFileExplorer
             switch (e.KeyCode)
             {
                 case Keys.Back:
-                    HistoryGoBack();
-                    pressHandled = true;
+                    if (!txtDirectory.Focused)
+                    {
+                        HistoryGoBack();
+                        pressHandled = true;
+                    }
                     break;
                 case Keys.Next:
                     break;
