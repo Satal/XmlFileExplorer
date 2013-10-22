@@ -41,5 +41,13 @@ namespace XmlFileExplorer.Tests
             var isValid = validator.IsValid(@"C:\Users\satal_000\Documents\GitHub\XmlFileExplorer\trunk\Test Files\Products\ValidXmlDoc1.xml");
             Assert.IsTrue(isValid);
         }
+
+        [TestMethod]
+        public void SchemaDoesntExist()
+        {
+            var validator = new XsdValidator();
+            var isValid = validator.AddSchema(@"C:\Users\satal_000\Documents\GitHub\XmlFileExplorer\trunk\Test Files\Products\SchemaDoesntExist.xsd");
+            Assert.IsFalse(isValid);
+        }
     }
 }

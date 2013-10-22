@@ -55,6 +55,7 @@ namespace XmlFileExplorer.Forms
         internal void SetErrors(IEnumerable<ValidationError> errors)
         {
             _validationErrors = errors.ToList();
+            olvValidationErrors.Items.Clear();
             olvValidationErrors.AddObjects(_validationErrors);
         }
     }

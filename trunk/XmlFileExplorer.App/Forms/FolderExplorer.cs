@@ -14,8 +14,8 @@ namespace XmlFileExplorer.Forms
 
     public partial class FolderExplorer : DockContent
     {
-        private bool _formFinishedLoading = false;
-        private bool _openingDirectory = false;
+        private bool _formFinishedLoading;
+        private bool _openingDirectory;
 
         public FolderExplorer()
         {
@@ -32,6 +32,8 @@ namespace XmlFileExplorer.Forms
 
         public void OpenDirectory(string path)
         {
+            _openingDirectory = true;
+
             // Make sure that the path is not null or empty
             if (String.IsNullOrEmpty(path)) return;
             var dir = new DirectoryInfo(path);
@@ -73,6 +75,8 @@ namespace XmlFileExplorer.Forms
             }
 
             tvNavigation.EndUpdate();
+
+            _openingDirectory = false;
         }
 
         private void PopulateTreeView()
@@ -148,6 +152,11 @@ namespace XmlFileExplorer.Forms
                 FolderLocationChanged(this,
                                       new FolderLocationChangedEventArgs(selectedDir.FullName));
             }
+        }
+
+        private void FolderExplorer_Shown(object sender, EventArgs e)
+        {
+            _formFinishedLoading = true;
         }
     }
 }

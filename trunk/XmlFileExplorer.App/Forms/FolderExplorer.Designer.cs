@@ -69,6 +69,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Folder Explorer";
+            this.Shown += new System.EventHandler(this.FolderExplorer_Shown);
             this.ResumeLayout(false);
 
         }

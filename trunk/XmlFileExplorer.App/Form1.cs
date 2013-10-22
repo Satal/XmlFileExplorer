@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using XmlFileExplorer.Domain.Describer;
 using XmlFileExplorer.Domain.Validation;
 using XmlFileExplorer.Event;
 using XmlFileExplorer.Forms;
@@ -17,7 +21,11 @@ namespace XmlFileExplorer
         private readonly ErrorsForm _errors;
         private readonly FolderExplorer _explorer;
         private readonly FilesForm _filesForm;
+        private readonly DescriptionForm _descriptionForm;
         private readonly Stack<DirectoryInfo> _history = new Stack<DirectoryInfo>();
+
+        [ImportMany(typeof(IDescriptor))]
+        public List<IDescriptor> Descriptors { get; set; } 
 
         private bool _formFinishedLoading;
 
@@ -36,15 +44,43 @@ namespace XmlFileExplorer
             _errors = new ErrorsForm();
             _errors.Show(dockPanel1, DockState.DockBottom);
 
-            OpenDirectory(Settings.Default.LastViewedDirectory);
+            _descriptionForm = new DescriptionForm();
+            _descriptionForm.Show(dockPanel1, DockState.DockRight);
+
+            var dirToOpen = Settings.Default.LastViewedDirectory;
+            if (String.IsNullOrEmpty(dirToOpen))
+            {
+                dirToOpen = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+
+            OpenDirectory(dirToOpen);
+            Descriptors = new List<IDescriptor>();
+            LoadDescriptors();
+        }
+
+        private void LoadDescriptors()
+        {
+            var catalog = new AggregateCatalog();
+            foreach (string dll in Directory.GetFiles(Application.StartupPath, "*.dll"))
+            {
+                catalog.Catalogs.Add(new AssemblyCatalog(Assembly.LoadFrom(dll)));
+            }
+            var container = new CompositionContainer(catalog);
+            container.ComposeParts(this);
         }
 
         private DirectoryInfo CurrentDirectory { get; set; }
 
         private void _filesForm_FileSelectionChanged(object sender, FileSelectionChangedEventArgs eventArgs)
         {
-            IEnumerable<ValidationError> errors = eventArgs.Files.SelectMany(f => f.ValidationErrors);
+            var errors = eventArgs.Files.SelectMany(f => f.ValidationErrors);
             _errors.SetErrors(errors);
+
+            if (eventArgs.Files.Count != 1) return;
+            var fileLocation = eventArgs.Files.First().FileInfo.FullName;
+            var desc = Descriptors.Select(descriptor => descriptor.GetAttributes(fileLocation)).SelectMany(items => items).ToDictionary(item => item.Key, item => item.Value);
+
+            _descriptionForm.SetDictionary(desc);
         }
 
         private void explorer_FolderLocationChanged(object sender, FolderLocationChangedEventArgs eventArgs)

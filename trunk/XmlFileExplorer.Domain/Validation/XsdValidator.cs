@@ -25,6 +25,9 @@ namespace XmlFileExplorer.Domain.Validation
         /// <returns>True if the schema file was successfully loaded, else false (if false, view Errors/Warnings for reason why)</returns>
         public bool AddSchema(string schemaFileLocation)
         {
+            if (String.IsNullOrEmpty(schemaFileLocation)) return false;
+            if (!File.Exists(schemaFileLocation)) return false;
+
             // Reset the Error/Warning collections
             Errors = new List<string>();
             Warnings = new List<string>();
