@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using KetoLibrary.Xml;
 using XmlFileExplorer.Domain;
 using XmlFileExplorer.Domain.Config;
 using XmlFileExplorer.Domain.Validation;

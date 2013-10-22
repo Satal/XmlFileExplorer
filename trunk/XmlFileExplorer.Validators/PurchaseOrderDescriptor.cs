@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using KetoLibrary.Xml;
 using XmlFileExplorer.Domain;
 using XmlFileExplorer.Domain.Describer;
 
