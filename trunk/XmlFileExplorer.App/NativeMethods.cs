@@ -11,6 +11,7 @@ namespace XmlFileExplorer
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         private static extern bool ShellExecuteEx(ref ShellExecuteInfo lpExecInfo);
 
+
         public static bool ShowProperties(string filename)
         {
             var info = new ShellExecuteInfo();
@@ -46,5 +47,36 @@ namespace XmlFileExplorer
             public IntPtr hIcon;
             public IntPtr hProcess;
         }
+
+        #region File type
+
+        // Based on the code from http://objectlistview.sourceforge.net/cs/index.html
+        private const int MAX_PATH = 260; 
+        private const int SHGFI_TYPENAME = 0x00400;     // get type name
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr SHGetFileInfo(string pszPath, int dwFileAttributes,
+            out SHFILEINFO psfi, int cbFileInfo, int uFlags);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct SHFILEINFO
+        {
+            public IntPtr hIcon;
+            public int iIcon;
+            public int dwAttributes;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
+            public string szDisplayName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+            public string szTypeName;
+        }
+
+        public static string GetFileType(string filename)
+        {
+            SHFILEINFO shfi = new SHFILEINFO();
+            int flags = SHGFI_TYPENAME;
+            IntPtr result = SHGetFileInfo(filename, 0, out shfi, Marshal.SizeOf(shfi), flags);
+            return result.ToInt32() == 0 ? String.Empty : shfi.szTypeName;
+        }
+        #endregion
     }
 }

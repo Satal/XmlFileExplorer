@@ -87,6 +87,15 @@ namespace XmlFileExplorer.Forms
 
                     return String.Format("{0} bytes", size);
                 };
+
+            try
+            {
+                colFileType.AspectGetter = x => NativeMethods.GetFileType(((XfeFileInfo)x).FileInfo.FullName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void LoadValidators()
