@@ -241,6 +241,8 @@ namespace XmlFileExplorer.Forms
 
         private void olvFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
+            // If Label is null then the user cancelled the rename
+            if (e.Label == null) return;
             var item = olvFiles.Items[e.Item] as OLVListItem;
             if (item == null) return;
             var file = item.RowObject as XfeFileInfo;
@@ -248,8 +250,7 @@ namespace XmlFileExplorer.Forms
             // Check that the file isn't null and that the file name has changed
             if (file == null || file.FileInfo.Directory == null || e.Label == file.FileInfo.Name) return;
 
-            string newFileName = e.Label;
-
+            var newFileName = e.Label;
             var newFile = new FileInfo(Path.Combine(file.FileInfo.Directory.FullName, newFileName));
 
             if (newFile.Exists)
